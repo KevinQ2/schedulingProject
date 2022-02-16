@@ -1,0 +1,7 @@
+<h1>Create new project</h1>
+<%= render "error_project" %>
+
+<%= form_for(@project) do |f| %>
+  Name: <%= f.text_field :name %>
+  <%= f.submit "Create Project" %>
+<% end %>

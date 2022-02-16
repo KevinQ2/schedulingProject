@@ -1,0 +1,10 @@
+<h1>Register account</h1>
+<%= render "error_user" %>
+
+<%= form_for(@user) do |f| %>
+  <%= render(:partial => 'register_form', :locals => {:f => f}) %>
+  <%= f.submit "Create Account" %>
+<% end %>
+
+<p>Already have an account?</p>
+<%= link_to "Login", '/login', method: :get %>
