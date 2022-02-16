@@ -1,0 +1,7 @@
+<h1>Create new organization</h1>
+<%= render "error_organization" %>
+
+<%= form_for(@organization) do |f| %>
+  Name: <%= f.text_field :name %>
+  <%= f.submit "Create Organization" %>
+<% end %>

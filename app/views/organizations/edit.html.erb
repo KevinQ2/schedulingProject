@@ -1,0 +1,8 @@
+<h1>Edit Organizations</h1>
+<%= render "error_organization" %>
+
+<%= form_for(@organization) do |f| %>
+  Name: <%= f.text_field :name %>
+  Host: <%= f.text_field :user_id %>
+  <%= f.submit "Save changes" %>
+<% end %>

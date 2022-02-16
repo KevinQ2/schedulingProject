@@ -1,0 +1,11 @@
+<h1>Create new task</h1>
+<%= render "error_task" %>
+
+<%= form_for(@task) do |f| %>
+  Title: <%= f.text_field :title %>
+  Description: <%= f.text_field :description %>
+  Average duration: <%= f.text_field :average_duration %>
+  Amount of similar tasks: <%= f.text_field :amount %>
+
+  <%= f.submit "Create Task" %>
+<% end %>

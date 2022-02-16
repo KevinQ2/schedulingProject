@@ -10,6 +10,14 @@
   </head>
 
   <body>
+    <!-- Notifications -->
+    <% flash.each do |type, msg| %>
+      <div id="flash" class="text-center alert-info alert alert-<%= type %>">
+          <%= msg%>
+      </div>
+    <% end %>
+    <!-- END Notifications -->
+
     <%= yield %>
   </body>
 </html>
