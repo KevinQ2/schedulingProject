@@ -2,38 +2,40 @@
 <a href="<%= "/project/#{params[:id]}/tasks/new" %>"><button type="button">Create new task</button></a>
 
 <br>
-<thead>
-  <tr>
-    <th>Task ID</th>
-    <th>Title</th>
-    <th>Description</th>
-    <th>Average duration</th>
-    <th>Amount</th>
-    <th>Precedences</th>
-    <th>Action</th>
-  </tr>
-</thead><br>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Task ID</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Average duration</th>
+      <th>Amount</th>
+      <th>Precedences</th>
+      <th>Action</th>
+    </tr>
+  </thead><br>
 
-<% @tasks.each do |task| %>
-  <tr>
-    <td><%= task.id %></td>
-    <td><%= task.title %></td>
-    <td><%= task.description %></td>
-    <td><%= task.average_duration %></td>
-    <td><%= task.amount %></td>
-    <%
-      precedences = TaskPrecedence.where(:task_id == task.id)
-      precedence_list = []
-      precedences.each do |precedence|
-        precedence_list.push(precedence.requiredTask_id)
-      end
-    %>
-    <td><%= precedence_list %></td>
+  <% @tasks.each do |task| %>
+    <tr>
+      <td><%= task.id %></td>
+      <td><%= task.title %></td>
+      <td><%= task.description %></td>
+      <td><%= task.average_duration %></td>
+      <td><%= task.amount %></td>
+      <%
+        precedences = TaskPrecedence.where(:task_id == task.id)
+        precedence_list = []
+        precedences.each do |precedence|
+          precedence_list.push(precedence.requiredTask_id)
+        end
+      %>
+      <td><%= precedence_list %></td>
 
-    <td>
-      <a href="<%= task_path(task) %>"><button type="button">Show</button></a>
-      <a href="<%= edit_task_path(task) %>"><button type="button">Edit</button></a>
-      <a href="<%= delete_task_path(task) %>"><button type="button">Delete</button></a>
-    </td>
-  </tr><br>
-<% end %>
+      <td>
+        <a href="<%= task_path(task) %>"><button type="button">Show</button></a>
+        <a href="<%= edit_task_path(task) %>"><button type="button">Edit</button></a>
+        <a href="<%= delete_task_path(task) %>"><button type="button">Delete</button></a>
+      </td>
+    </tr><br>
+  <% end %>
+</table>

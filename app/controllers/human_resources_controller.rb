@@ -32,6 +32,6 @@ class HumanResourcesController < ApplicationController
 
   private
     def human_resource_params
-      params.require(:human_resource).permit(:name, :population)
+      params.require(:human_resource).permit(:name, :instances)
     end
 end

@@ -1,28 +1,31 @@
 <h1>Users#index</h1>
 <p>Users</p><br>
-<br>
-<thead>
-  <tr>
-    <th>Username</th>
-    <th>First name</th>
-    <th>Last name</th>
-    <th>Email</th>
-    <th>Telephone</th>
-    <th>Action</th>
-  </tr>
-</thead><br>
 
-<% @users.each do |user| %>
-  <tr>
-    <td><%= user.username %></td>
-    <td><%= user.first_name %></td>
-    <td><%= user.last_name %></td>
-    <td><%= user.email %></td>
-    <td><%= user.telephone %></td>
-    <td>
-      <a href="<%= user_path(user) %>"><button type="button">Show</button></a>
-      <a href="<%= edit_user_path(user) %>"><button type="button">Edit</button></a>
-      <a href="<%= delete_user_path(user) %>"><button type="button">Delete</button></a>
-    </td>
-  </tr><br>
-<% end %>
+<br>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Email</th>
+      <th>Telephone</th>
+      <th>Action</th>
+    </tr>
+  </thead><br>
+
+  <% @users.each do |user| %>
+    <tr>
+      <td><%= user.username %></td>
+      <td><%= user.first_name %></td>
+      <td><%= user.last_name %></td>
+      <td><%= user.email %></td>
+      <td><%= user.telephone %></td>
+      <td>
+        <a href="<%= user_path(user) %>"><button type="button">Show</button></a>
+        <a href="<%= edit_user_path(user) %>"><button type="button">Edit</button></a>
+        <a href="<%= delete_user_path(user) %>"><button type="button">Delete</button></a>
+      </td>
+    </tr><br>
+  <% end %>
+</table>
