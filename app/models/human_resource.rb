@@ -3,5 +3,5 @@ class HumanResource < ApplicationRecord
   has_many :schedule_task
 
   validates :name, presence: true, uniqueness: { case_sensitive: false }
-  validates :population, presence: true
+  validates :instances, presence: true
 end
