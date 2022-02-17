@@ -1,3 +1,7 @@
-<h1>Delete human resource</h1>
+<a href="<%= "/project/#{@human_resource.project_id}/human_resources" %>">Back</a>
 
-<p>Find me in app/views/human_resources/delete.html.erb</p>
+<h1>Delete Human Resource</h1>
+<p>Are you sure you want to delete this?</p>
+<%= form_for @human_resource, method: :delete do |f| %>
+  <%= f.submit "Delete" %>
+<% end %>

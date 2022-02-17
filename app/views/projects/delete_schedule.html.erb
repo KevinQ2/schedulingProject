@@ -1,0 +1,7 @@
+<a href="<%= "/projects/#{params[:id]}" %>">Back</a>
+
+<h1>Delete Schedule</h1>
+<p>Are you sure you want to delete this?</p>
+<%= form_for(@project, url: delete_schedule_path, :method => 'post') do |f| %>
+  <%= f.submit "Delete" %>
+<% end %>

@@ -1,2 +1,7 @@
+<a href="<%= "/organization/#{@project.organization_id}/projects" %>">Back</a>
+
 <h1>Delete Project</h1>
-<p>Find me in app/views/projects/delete.html.erb</p>
+<p>Are you sure you want to delete this?</p>
+<%= form_for @project, method: :delete do |f| %>
+  <%= f.submit "Delete" %>
+<% end %>

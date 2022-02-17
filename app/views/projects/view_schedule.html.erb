@@ -1,0 +1,25 @@
+<a href="<%= "/projects/#{params[:id]}" %>">Back</a>
+
+<h1>Project schedule</h1>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Time</th>
+      <th>Human ID</th>
+      <th>Human instance ID</th>
+      <th>Task ID</th>
+      <th>Task instance ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @schedules.each do |schedule| %>
+      <tr>
+        <td><%= schedule.start_date %></td>
+        <td><%= schedule.human_resource_id %></td>
+        <td><%= schedule.human_resource_instance_id %></td>
+        <td><%= schedule.task_id %></td>
+        <td><%= schedule.task_instance_id %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

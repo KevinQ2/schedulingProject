@@ -1,5 +1,6 @@
 class OrganizationsController < ApplicationController
   before_action :redirect_if_not_logged_in
+  before_action :redirect_if_not_authorised, except: [:index, :new, :create]
 
   def index
     @organizations = []
@@ -64,6 +65,12 @@ class OrganizationsController < ApplicationController
   end
 
   private
+    def redirect_if_not_authorised
+      unless OrganizationUser.exists?(:user_id => current_user.id, :organization_id => params[:id])
+        redirect_to '/home'
+      end
+    end
+
     def organization_params
       params.require(:organization).permit(:name)
     end

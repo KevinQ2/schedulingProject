@@ -6,5 +6,5 @@ class Task < ApplicationRecord
   has_many :schedule_task, dependent: :destroy
 
   validates :title, presence: true
-  validates :amount, presence: true
+  validates :instances, presence: true
 end

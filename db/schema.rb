@@ -45,14 +45,18 @@ ActiveRecord::Schema.define(version: 2021_12_09_062746) do
     t.index ["organization_id"], name: "index_projects_on_organization_id"
   end
 
-  create_table "schedule_tasks", primary_key: ["task_id", "human_resource_id"], force: :cascade do |t|
-    t.bigint "task_id", null: false
-    t.bigint "human_resource_id", null: false
+  create_table "schedule_tasks", force: :cascade do |t|
+    t.bigint "project_id"
+    t.bigint "task_id"
+    t.bigint "human_resource_id"
+    t.integer "human_resource_instance_id"
+    t.integer "task_instance_id"
     t.integer "start_date"
     t.integer "end_date"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["human_resource_id"], name: "index_schedule_tasks_on_human_resource_id"
+    t.index ["project_id"], name: "index_schedule_tasks_on_project_id"
     t.index ["task_id"], name: "index_schedule_tasks_on_task_id"
   end
 

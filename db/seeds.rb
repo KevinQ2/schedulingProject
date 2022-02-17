@@ -31,7 +31,6 @@ master_organizations.each do |temp|
   organization = Organization.create(
     name: temp[0]
   )
-  organization.save
 end
 
 master_organization_user = [
@@ -43,7 +42,6 @@ master_organization_user.each do |temp|
     organization_id: temp[0],
     user_id: temp[1]
   )
-  organization_user.save
 end
 
 master_projects = [
@@ -55,5 +53,31 @@ master_projects.each do |temp|
     organization_id: temp[0],
     name: temp[1]
   )
-  project.save
+end
+
+master_tasks = [
+  [1, "Task A", 5, 10],
+  [1, "Task B", 20, 5]
+]
+
+master_tasks.each do |temp|
+  task = Task.create(
+    project_id: temp[0],
+    title: temp[1],
+    average_duration: temp[2],
+    instances: temp[3]
+  )
+end
+
+master_human_resources = [
+  [1, "Team A", 3],
+  [1, "Team B", 5]
+]
+
+master_human_resources.each do |temp|
+  human_resource = HumanResource.create(
+    project_id: temp[0],
+    name: temp[1],
+    instances: temp[2]
+  )
 end

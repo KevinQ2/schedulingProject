@@ -1,2 +1,7 @@
+<a href="<%= "/project/#{@task.project_id}/tasks" %>">Back</a>
+
 <h1>Delete Task</h1>
-<p>Find me in app/views/tasks/delete.html.erb</p>
+<p>Are you sure you want to delete this?</p>
+<%= form_for @task, method: :delete do |f| %>
+  <%= f.submit "Delete" %>
+<% end %>

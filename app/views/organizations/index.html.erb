@@ -1,3 +1,5 @@
+<a href="<%= "/home" %>">Back</a>
+
 <h1>Organizations</h1>
 <a href="<%= new_organization_path %>"><button type="button">Create new organization</button></a>
 
@@ -8,16 +10,17 @@
       <th>Organization</th>
       <th>Action</th>
     </tr>
-  </thead><br>
-
-  <% @organizations.each do |organization| %>
-    <tr>
-      <td><%= organization.name %></td>
-      <td>
-        <a href="<%= organization_path(organization) %>"><button type="button">Show</button></a>
-        <a href="<%= edit_organization_path(organization) %>"><button type="button">Edit</button></a>
-        <a href="<%= delete_organization_path(organization) %>"><button type="button">Delete</button></a>
-      </td>
-    </tr><br>
-  <% end %>
+  </thead>
+  <tbody>
+    <% @organizations.each do |organization| %>
+      <tr>
+        <td><%= organization.name %></td>
+        <td>
+          <a href="<%= organization_path(organization) %>"><button type="button">Show</button></a>
+          <a href="<%= edit_organization_path(organization) %>"><button type="button">Edit</button></a>
+          <a href="<%= delete_organization_path(organization) %>"><button type="button">Delete</button></a>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
