@@ -9,6 +9,7 @@ class UsersController < ApplicationController
   end
 
   def show
+    @organization_user = OrganizationUser.find(params[:id])
   end
 
   def new
@@ -28,6 +29,8 @@ class UsersController < ApplicationController
   end
 
   def delete
+    @organization_user = OrganizationUser.find(params[:id])
+    
   end
 
   private

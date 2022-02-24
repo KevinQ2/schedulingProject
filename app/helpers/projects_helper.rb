@@ -1,128 +1,183 @@
 module ProjectsHelper
-  Person = Struct.new(:id, :time, :instance_id)
-  TaskStruct = Struct.new(:id, :duration, :weight, :count, :instances)
-  ScheduleStruct = Struct.new(:time, :human_id, :human_instance_id, :task_id, :task_instance_id)
-
   def get_schedule(project)
-    human_resources = HumanResource.where(:project_id => params[:id])
-    tasks = Task.where(:project_id => params[:id])
+    decision_set = []
+    invalid = []
 
-    # (id, time of finishing)
-    human_queue = []
-    human_resources.each do |human|
-      instance_id = 0
+    Task.where(:project_id => project.id).each do |task|
+      decision_set.push(task.id)
+    end
 
-      loop do
-        if instance_id >= human.instances
+    temp = decision_set.clone
+
+    TaskPrecedence.where(:task_id => temp).each do |prec|
+      decision_set.delete(prec.task_id)
+      invalid.push(prec.task_id)
+    end
+
+    resources = {}
+
+    HumanResource.where(:project_id => project.id).each do |human_resource|
+      resources[human_resource.id] = human_resource.instances
+    end
+
+    return gen_schedule({}, decision_set, invalid, [0], {0 => resources}, 0)
+  end
+
+  def gen_schedule(completed, decision_set, invalid, f_times, resources, count)
+    if decision_set.count == 0
+      return completed
+    end
+
+    decision_set, invalid = update_decision_set(completed, decision_set, invalid)
+
+    # allocate next task
+    best_start_time = nil
+    best_capacity = nil
+    best_record = nil
+
+    decision_set.each do |current_task|
+      last_prec_time = get_last_prec_time(current_task, completed)
+
+      TaskResource.where(:task_id => current_task).each do |record|
+        task_id = record.task_id
+        human_resource_id = record.human_resource_id
+        duration = record.duration
+        capacity = record.capacity
+
+        start_time = get_early_employee_time(last_prec_time, human_resource_id, duration, capacity, f_times, resources)
+
+        if best_start_time == nil
+          best_start_time = start_time
+          best_capacity = capacity
+          best_record = record
+        elsif start_time < best_start_time
+          best_start_time = start_time
+          best_capacity = capacity
+          best_record = record
+        elsif (start_time == best_start_time && capacity > best_capacity)
+          best_start_time = start_time
+          best_capacity = capacity
+          best_record = record
+        end
+      end
+    end
+
+    if best_record == nil
+      flash.alert = "error with scheduling: " + count.to_s
+      return completed
+    end
+
+    task_id = best_record.task_id
+    human_resource_id = best_record.human_resource_id
+    duration = best_record.duration
+    capacity = best_record.capacity
+
+    end_time = best_start_time + duration
+
+    decision_set.delete(task_id)
+    completed[task_id] = [end_time, best_record.id]
+
+    f_times, resources = update_resources(best_start_time, end_time, human_resource_id, capacity, f_times, resources)
+
+    return gen_schedule(completed, decision_set, invalid, f_times, resources, count + 1)
+  end
+
+  def update_decision_set(completed, decision_set, invalid)
+    stack = []
+
+    invalid.each do |task_id|
+      # if precedence requirements are met
+      met = true
+
+      TaskPrecedence.where(:task_id => task_id).each do |prec|
+        if completed[prec.required_task_id] == nil
+          met = false
           break
         end
+      end
 
-        person = Person.new
-        person.id = human.id
-        person.time = 0
-        person.instance_id = instance_id
-        human_queue.push(person)
-
-        instance_id += 1
+      if met
+        decision_set.push(task_id)
+        stack.push(task_id)
       end
     end
 
-    # (id, duration, instances)
-    task_queue = []
-
-    tasks.each do |task|
-      taskS = TaskStruct.new
-      taskS.id = task.id
-      taskS.duration = task.average_duration
-      taskS.weight = getTaskWeight(task)
-      taskS.count = 0
-      taskS.instances = task.instances
-      task_queue.insert(binary_searchT(task_queue, taskS, 0, task_queue.count), taskS)
+    stack.each do |task|
+      invalid.delete(task)
     end
 
-    task_queue = task_queue.reverse()
-
-    # (time, human id, task id)
-    schedule = []
-    return doSchedule(human_queue, task_queue, schedule)
+    return decision_set, invalid
   end
 
-  def doSchedule(humans, tasks, schedule)
-    if tasks.count == 0
-      return schedule
-    end
+  def get_last_prec_time(task, completed)
+    last_prec_time = 0
 
-    current_human = humans.shift
-    tasks[0].count += 1
+    TaskPrecedence.where(:task_id => task).each do |prec|
+      end_time = completed[prec.required_task_id][0]
 
-    scheduleS = ScheduleStruct.new
-    scheduleS.time = current_human.time
-    scheduleS.human_id = current_human.id
-    scheduleS.human_instance_id = current_human.instance_id
-    scheduleS.task_id = tasks[0].id
-    scheduleS.task_instance_id = tasks[0].count
-    schedule.push(scheduleS)
-
-    # update human resource queue
-    current_human.time = current_human.time + tasks[0].duration
-    humans.insert(binary_search(humans, current_human, 0, humans.count), current_human)
-
-    if tasks[0].count == tasks[0].instances
-      tasks.shift
-    end
-
-    return doSchedule(humans, tasks, schedule)
-  end
-
-  def getTaskWeight(task)
-    precedences = TaskPrecedence.where(:required_task_id => task.id)
-    max_weight = 0
-
-    precedences.each do |prec_task|
-      temp_weight = getTaskWeight(Task.find(prec_task.task_id))
-
-      if temp_weight > max_weight
-        max_weight = temp_weight
+      if end_time > last_prec_time
+        last_prec_time = end_time
       end
     end
 
-    return task.average_duration + max_weight
+    return last_prec_time
   end
 
-  def binary_search(human, new_human, min, max)
-    if min == max
-      return min
-    elsif min > max
-      return min
+  def get_early_employee_time(earliest, human_resource_id, duration, capacity, f_times, resources)
+    current_index = f_times.index(earliest)
+    start_time = nil
+    time_acc = 0
+
+    # get valid start time which maintains resource demand throughout duration
+    # last is guaranteed to have enough resources
+    while (current_index < f_times.count && time_acc < duration)
+      current_time = f_times[current_index]
+      current_caps = resources[current_time]
+
+      if capacity <= current_caps[human_resource_id]
+        if start_time == nil
+          start_time = current_time
+        else
+          time_acc = current_time - start_time
+        end
+      else
+        time_acc = 0
+        start_time = nil
+      end
+
+      current_index += 1
     end
 
-    mid = ((min + max) / 2).floor
-
-    if new_human.time == human[mid].time
-      return mid
-    elsif new_human.time < human[mid].time
-      return binary_search(human, new_human, min, mid - 1)
-    else
-      return binary_search(human, new_human, mid + 1, max)
-    end
+    return start_time
   end
 
-  def binary_searchT(task, new_task, min, max)
-    if min == max
-      return min
-    elsif min > max
-      return min
+  def update_resources(start_time, end_time, human_resource_id, capacity, f_times, resources)
+    index = f_times.index(start_time)
+    latest = index
+
+    loop do
+      if index >= f_times.count
+        break
+      end
+
+      current_time = f_times[index]
+
+      if (current_time >= start_time) && (current_time < end_time)
+        latest = index
+        resources[current_time][human_resource_id] = resources[current_time][human_resource_id] - capacity
+      else
+        break
+      end
+
+      index += 1
     end
 
-    mid = ((min + max) / 2).floor
-
-    if new_task.weight == task[mid].weight
-      return mid
-    elsif new_task.weight < task[mid].weight
-      return binary_search(task, new_task, min, mid - 1)
-    else
-      return binary_search(task, new_task, mid + 1, max)
+    if f_times.include?(end_time) == false
+      f_times.insert(latest + 1, end_time)
+      resources[end_time] = resources[f_times[latest]].clone
+      resources[end_time][human_resource_id] = resources[end_time][human_resource_id] + capacity
     end
+
+    return f_times, resources
   end
-
 end

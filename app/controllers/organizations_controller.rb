@@ -56,12 +56,8 @@ class OrganizationsController < ApplicationController
 
   def destroy
     organization = Organization.find(params[:id])
-
-    if organization.destroy
-      redirect_to organizations_path
-    else
-      render "delete"
-    end
+    organization.destroy
+    redirect_to organizations_path
   end
 
   private

@@ -56,22 +56,38 @@ master_projects.each do |temp|
 end
 
 master_tasks = [
-  [1, "Task A", 5, 10],
-  [1, "Task B", 20, 5]
+  [1, "1", 1],
+  [1, "2", 1],
+  [1, "3", 1],
+  [1, "4", 1],
+  [1, "5", 1],
+  [1, "6", 1]
 ]
 
 master_tasks.each do |temp|
   task = Task.create(
     project_id: temp[0],
     title: temp[1],
-    average_duration: temp[2],
-    instances: temp[3]
+    instances: temp[2]
+  )
+end
+
+master_task_precedences = [
+  [3, 1],
+  [5, 3],
+  [4, 2],
+  [6, 4]
+]
+
+master_task_precedences.each do |temp|
+  precedence = TaskPrecedence.create(
+    task_id: temp[0],
+    required_task_id: temp[1]
   )
 end
 
 master_human_resources = [
-  [1, "Team A", 3],
-  [1, "Team B", 5]
+  [1, "Team A", 4]
 ]
 
 master_human_resources.each do |temp|
@@ -79,5 +95,24 @@ master_human_resources.each do |temp|
     project_id: temp[0],
     name: temp[1],
     instances: temp[2]
+  )
+end
+
+master_task_resources = [
+  [1, 1, 1, 3, 2],
+  [1, 2, 1, 4, 3],
+  [1, 3, 1, 2, 4],
+  [1, 4, 1, 2, 4],
+  [1, 5, 1, 1, 3],
+  [1, 6, 1, 4, 2]
+]
+
+master_task_resources.each do |temp|
+  task_resource = TaskResource.create(
+    project_id: temp[0],
+    task_id: temp[1],
+    human_resource_id: temp[2],
+    duration: temp[3],
+    capacity: temp[4]
   )
 end

@@ -35,9 +35,10 @@ class TasksController < ApplicationController
 
   def destroy
     @task = Task.find(params[:id])
-    @task.destroy
+    project_id = task.project_id
 
-    redirect_to "/project/#{params[:id]}/tasks"
+    @task.destroy
+    redirect_to "/project/#{project_id}/tasks"
   end
 
   private
@@ -48,6 +49,6 @@ class TasksController < ApplicationController
     end
 
     def task_params
-      params.require(:task).permit(:title, :description, :average_duration, :instances)
+      params.require(:task).permit(:title, :description, :instances)
     end
 end

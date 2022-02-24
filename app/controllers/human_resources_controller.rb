@@ -35,12 +35,10 @@ class HumanResourcesController < ApplicationController
 
   def destroy
     human_resource = HumanResource.find(params[:id])
-
-    if human_resource.destroy
-      redirect_to "/project/#{params[:id]}/human_resources"
-    else
-      render "delete"
-    end
+    project_id = human_resource.project_id
+    
+    human_resource.destroy
+    redirect_to "/project/#{project_id}/human_resources"
   end
 
   private

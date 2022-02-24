@@ -30,19 +30,31 @@ class ProjectsController < ApplicationController
     @project = Project.find(params[:id])
   end
 
+  def delete
+    @project = Project.find(params[:id])
+  end
+
+  def destroy
+    project = Project.find(params[:id])
+    organization_id = project.organization_id
+
+    if project.destroy
+      redirect_to "/organization/#{organization_id}/projects"
+    else
+      render "delete"
+    end
+  end
+
   def generate_schedule
     @project = Project.find(params[:id])
-    @schedule = view_context.get_schedule(@project)
+    schedule = view_context.get_schedule(@project)
 
-    @schedule.each do |record|
+    schedule.each do |record|
       ScheduleTask.create(
         project_id: @project.id,
-        start_date: record[0],
-        end_date: record[0] + Task.find(record[3]).average_duration,
-        human_resource_id: record[1],
-        human_resource_instance_id: record[2],
-        task_id: record[3],
-        task_instance_id: record[4]
+        start_date: record[1][0] - TaskResource.find(record[1][1]).duration,
+        end_date: record[1][0],
+        task_resource_id: record[1][1]
       )
     end
 
@@ -66,20 +78,6 @@ class ProjectsController < ApplicationController
     end
 
     redirect_to "/projects/#{params[:id]}"
-  end
-
-  def delete
-    @project = Project.find(params[:id])
-  end
-
-  def destroy
-    project = Project.find(params[:id])
-
-    if project.destroy
-      redirect_to "/organization/#{params[:id]}/projects"
-    else
-      render "delete"
-    end
   end
 
   private
