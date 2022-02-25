@@ -1,7 +1,7 @@
-<a href="<%= "/organizations" %>">Back</a>
+<a href="<%= organizations_path %>">Back</a>
 
 <h1>Delete Organization</h1>
 <p>Are you sure you want to delete this?</p>
-<%= form_for @organization, method: :delete do |f| %>
+<%= form_for(@organization, method: "delete") do |f| %>
   <%= f.submit "Delete" %>
 <% end %>

@@ -1,13 +1,13 @@
-<a href="<%= "/project/#{@task.project_id}/tasks" %>">Back</a>
+<a href="<%= task_resources_path %>">Back</a>
 
 <h1>Edit Task</h1>
 
 <%= render "error_task_resource" %>
 
-<%= form_for(@task_resource, url: new_task_resource_path , :method => 'post') do |f| %>
+<%= form_for(@task_resource, method: 'patch') do |f| %>
   Task id: <%= f.text_field :task_id %>
   Human resource id: <%= f.text_field :human_resource_id %>
   Duration: <%= f.text_field :duration %>
   Capacity (number of people required): <%= f.text_field :capacity %>
-  <%= f.submit "Create human resource allocation option" %>
+  <%= f.submit "Save changes" %>
 <% end %>

@@ -17,4 +17,11 @@ class ApplicationController < ActionController::Base
       redirect_to "/login"
     end
   end
+
+  def redirect_if_not_member
+    if !OrganizationUser.exists?(:organization_id => session[:organization_id], :user_id => current_user.id)
+      flash.alert = "You are not authorised"
+      redirect_to "/home"
+    end
+  end
 end

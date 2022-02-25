@@ -1,9 +1,10 @@
 class HumanResourcesController < ApplicationController
   before_action :redirect_if_not_logged_in
-  before_action :redirect_if_not_authorised, except: [:index, :new, :create]
+  before_action :set_session, except: [:index, :new, :create]
+  before_action :redirect_if_not_member
 
   def index
-    @human_resources = HumanResource.where(:project => params[:id])
+    @human_resources = HumanResource.where(:project => session[:project_id])
   end
 
   def show
@@ -16,7 +17,7 @@ class HumanResourcesController < ApplicationController
 
   def create
     @human_resource = HumanResource.new(human_resource_params)
-    @human_resource.project_id = params[:id]
+    @human_resource.project_id = session[:project_id]
 
     if @human_resource.save
       redirect_to human_resources_path
@@ -36,16 +37,15 @@ class HumanResourcesController < ApplicationController
   def destroy
     human_resource = HumanResource.find(params[:id])
     project_id = human_resource.project_id
-    
+
     human_resource.destroy
-    redirect_to "/project/#{project_id}/human_resources"
+    redirect_to human_resources_path
   end
 
   private
-    def redirect_if_not_authorised
-      unless OrganizationUser.exists?(:user_id => current_user.id, :organization_id => Task.find(params[:id]).project.organization_id)
-        redirect_to '/home'
-      end
+    def set_session
+      session[:project_id] = HumanResource.find(params[:id]).project_id
+      session[:organization_id] = Project.find(session[:project_id]).organization_id
     end
 
     def human_resource_params

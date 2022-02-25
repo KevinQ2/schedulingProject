@@ -1,15 +1,15 @@
-<a href="<%= "/organization/#{@project.organization_id}/projects" %>">Back</a>
+<a href="<%= projects_path %>">Back</a>
 
 <h1>Project</h1>
-<a href="<%= "/project/#{@project.id}/human_resources" %>"><button type="button">Human resources</button></a>
-<a href="<%= "/project/#{@project.id}/tasks" %>"><button type="button">Tasks</button></a>
+<a href="<%= human_resources_path %>"><button type="button">Human resources</button></a>
+<a href="<%= tasks_path %>"><button type="button">Tasks</button></a>
 
 <% if ScheduleTask.exists?(:project_id => params[:id]) %>
   <a href="<%= view_schedule_project_path(@project.id) %>"><button type="button">View schedule</button></a>
   <a href="<%= delete_schedule_project_path(@project.id) %>"><button type="button">Delete schedule</button></a>
 <% else %>
 
-  <%= form_for(@project, url: generate_schedule_path , :method => 'post') do |f| %>
+  <%= form_for(@project, url: generate_schedule_path, method: 'post') do |f| %>
     <%= f.submit "Generate Schedule" %>
   <% end %>
 <% end %>

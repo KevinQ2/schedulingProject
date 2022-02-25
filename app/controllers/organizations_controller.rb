@@ -1,16 +1,13 @@
 class OrganizationsController < ApplicationController
   before_action :redirect_if_not_logged_in
-  before_action :redirect_if_not_authorised, except: [:index, :new, :create]
+  before_action :set_session, except: [:index, :new, :create]
+  before_action :redirect_if_not_member, except: [:index, :new, :create]
 
   def index
     @organizations = []
 
-    OrganizationUser.all.each do |organization|
-      if organization.user_id == current_user.id
-        if Organization.exists?(id: organization.organization_id)
-          @organizations.push(Organization.find(organization.organization_id))
-        end
-      end
+    OrganizationUser.where(:user_id => current_user).each do |organization_user|
+      @organizations.push(Organization.find(organization_user.organization_id))
     end
   end
 
@@ -31,7 +28,7 @@ class OrganizationsController < ApplicationController
       OrganizationUser.create(:organization_id => @organization.id, :user_id => current_user.id)
       redirect_to organizations_path
     else
-      render new
+      render "new"
     end
   end
 
@@ -61,10 +58,8 @@ class OrganizationsController < ApplicationController
   end
 
   private
-    def redirect_if_not_authorised
-      unless OrganizationUser.exists?(:user_id => current_user.id, :organization_id => params[:id])
-        redirect_to '/home'
-      end
+    def set_session
+      session[:organization_id] = params[:id]
     end
 
     def organization_params

@@ -1,10 +1,10 @@
-<a href="<%= "/project/#{@human_resource.project_id}/human_resources" %>">Back</a>
+<a href="<%= human_resources_path %>">Back</a>
 
 <h1>Create new human resource</h1>
 <%= render "error_human_resource" %>
 
 
-<%= form_for(@human_resource, url: new_human_resource_path , :method => 'post') do |f| %>
+<%= form_for(@human_resource, method: 'post') do |f| %>
   Name: <%= f.text_field :name %>
   Instances: <%= f.text_field :instances %>
   <%= f.submit "Create Human resource" %>

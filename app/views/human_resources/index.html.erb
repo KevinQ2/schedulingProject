@@ -1,7 +1,7 @@
-<a href="<%= "/projects/#{params[:id]}" %>">Back</a>
+<a href="<%= project_path(session[:project_id]) %>">Back</a>
 
 <h1>Human Resources</h1>
-<a href="<%= "/project/#{params[:id]}/human_resources/new" %>"><button type="button">Create new human resource</button></a>
+<a href="<%= new_human_resource_path %>"><button type="button">Create new human resource</button></a>
 
 <br>
 <table class="table table-bordered">

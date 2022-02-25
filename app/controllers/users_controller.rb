@@ -2,14 +2,10 @@ class UsersController < ApplicationController
   before_action :redirect_if_not_logged_in, except: [:new, :create]
 
   def index
-    @users = []
-    OrganizationUser.where(:organization_id => params[:id]).each do |organization_user|
-      @users.push(User.find(organization_user.user_id))
-    end
+
   end
 
   def show
-    @organization_user = OrganizationUser.find(params[:id])
   end
 
   def new
@@ -29,7 +25,6 @@ class UsersController < ApplicationController
   end
 
   def delete
-    @organization_user = OrganizationUser.find(params[:id])
     
   end
 

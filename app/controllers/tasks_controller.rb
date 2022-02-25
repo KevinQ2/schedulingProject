@@ -1,9 +1,10 @@
 class TasksController < ApplicationController
   before_action :redirect_if_not_logged_in
-  before_action :redirect_if_not_authorised, except: [:index, :new, :create]
+  before_action :set_session, except: [:index, :new, :create]
+  before_action :redirect_if_not_member
 
   def index
-    @tasks = Task.where(:project_id => params[:id])
+    @tasks = Task.where(:project_id => session[:project_id])
   end
 
   def show
@@ -16,10 +17,10 @@ class TasksController < ApplicationController
 
   def create
     @task = Task.new(task_params)
-    @task.project_id = params[:id]
+    @task.project_id = session[:project_id]
 
     if @task.save
-      redirect_to "/project/#{params[:id]}/tasks"
+      redirect_to tasks_path
     else
       render "new"
     end
@@ -35,17 +36,16 @@ class TasksController < ApplicationController
 
   def destroy
     @task = Task.find(params[:id])
-    project_id = task.project_id
+    project_id = @task.project_id
 
     @task.destroy
-    redirect_to "/project/#{project_id}/tasks"
+    redirect_to tasks_path
   end
 
   private
-    def redirect_if_not_authorised
-      unless OrganizationUser.exists?(:user_id => current_user.id, :organization_id => Task.find(params[:id]).project.organization_id)
-        redirect_to '/home'
-      end
+    def set_session
+      session[:project_id] = Task.find(params[:id]).project_id
+      session[:organization_id] = Project.find(session[:project_id]).organization_id
     end
 
     def task_params

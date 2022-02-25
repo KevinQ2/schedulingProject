@@ -1,9 +1,9 @@
-<a href="<%= "/project/#{@task.project_id}/tasks" %>">Back</a>
+<a href="<%= task_resources_path %>">Back</a>
 
 <h1>Create new allocation</h1>
 <%= render "error_task_resource" %>
 
-<%= form_for(@task_resource) do |f| %>
+<%= form_for(@task_resource, method: 'post') do |f| %>
   Task id: <%= f.text_field :task_id %>
   Human resource id: <%= f.text_field :human_resource_id %>
   Duration: <%= f.text_field :duration %>

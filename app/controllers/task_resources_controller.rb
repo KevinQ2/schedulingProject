@@ -1,9 +1,11 @@
 class TaskResourcesController < ApplicationController
   before_action :redirect_if_not_logged_in
+  before_action :set_session, except: [:index, :new, :create]
+  before_action :redirect_if_not_member
 
   def index
     @task_resources = []
-    TaskResource.where(:task_id => params[:id]).each do |task_resource|
+    TaskResource.where(:task_id => session[:task_id]).each do |task_resource|
       @task_resources.push(TaskResource.find(task_resource.id))
     end
   end
@@ -20,7 +22,7 @@ class TaskResourcesController < ApplicationController
     @task_resource = TaskResource.new(task_resource_params)
 
     if @task_resource.save
-      redirect_to "/task/#{params[:id]}/task_resources"
+      redirect_to task_resources_path
     end
   end
 
@@ -37,14 +39,13 @@ class TaskResourcesController < ApplicationController
     project_id = task_resource.project_id
 
     task_resource.destroy
-    redirect_to "/project/#{project_id}/task_resources"
+    redirect_to task_resources_path
   end
 
   private
-    def redirect_if_not_authorised
-      unless OrganizationUser.exists?(:user_id => current_user.id, :organization_id => TaskResource.find(params[:id]).task.project.organization_id)
-        redirect_to '/home'
-      end
+    def set_session
+      session[:project_id] = TaskResource.find(params[:id]).project_id
+      session[:organization_id] = Project.find(session[:project_id]).organization_id
     end
 
     def task_resource_params
