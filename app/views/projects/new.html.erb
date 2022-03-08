@@ -1,9 +1,10 @@
-<a href="<%= projects_path %>">Back</a>
+<a href="<%= organization_path(session[:organization_id]) %>">Back</a>
 
 <h1>Create new project</h1>
 <%= render "error_project" %>
 
 <%= form_for(@project, method: "post") do |f| %>
-  Name: <%= f.text_field :name %>
+  <%= render(:partial=> 'form', :locals => {:f => f}) %>
+  <br>
   <%= f.submit "Create Project" %>
 <% end %>

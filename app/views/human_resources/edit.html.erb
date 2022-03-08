@@ -1,6 +1,10 @@
 <a href="<%= human_resources_path %>">Back</a>
 
-<h1>Edit human resource</h1>
+<h1>Edit Human resource</h1>
 <%= render "error_human_resource" %>
 
-<p>Find me in app/views/human_resources/edit.html.erb</p>
+<%= form_for(@human_resource, method: "patch") do |f| %>
+  <%= render(:partial=> 'form', :locals => {:f => f}) %>
+  <br>
+  <%= f.submit "Save changes" %>
+<% end %>

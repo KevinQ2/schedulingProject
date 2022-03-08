@@ -1,34 +1,95 @@
 <a href="<%= project_path(session[:project_id]) %>">Back</a>
 
-<h1>Tasks</h1>
-<a href="<%= new_task_resource_path %>"><button type="button">Create new task</button></a>
+<h1>Task/Human resource allocations</h1>
 
-<br>
+<%= form_with(url: task_resources_path, method: "post", remote: true) do |f| %>
+  <%= f.label :type, "Display by: " %>
+  <%= f.select :type, options_for_select(["Human resource", "Task"], :selected => session[:task_resource_type]), {},
+    :onchange => "this.form.submit();" %>
+<% end %>
+
 <table class="table table-bordered">
   <thead>
     <tr>
-      <th>Task resource ID</th>
-      <th>Task ID</th>
-      <th>Human resource ID</th>
+      <% if session[:task_resource_type] == "Human resource" %>
+        <th>Human resource</th>
+        <th>Task</th>
+      <% else %>
+        <th>Task</th>
+        <th>Human resource</th>
+      <% end %>
+
       <th>Duration</th>
       <th>Capacity</th>
       <th>Action</th>
     </tr>
   </thead>
+
   <tbody>
-    <% @task_resources.each do |task_resource| %>
-      <tr>
-        <td><%= task_resource.id %></td>
-        <td><%= task_resource.task_id %></td>
-        <td><%= task_resource.human_resource_id %></td>
-        <td><%= task_resource.duration %></td>
-        <td><%= task_resource.capacity %></td>
-        <td>
-          <a href="<%= task_resource_path(task_resource) %>"><button type="button">Show</button></a>
-          <a href="<%= edit_task_resource_path(task_resource) %>"><button type="button">Edit</button></a>
-          <a href="<%= delete_task_resource_path(task_resource) %>"><button type="button">Delete</button></a>
-        </td>
-      </tr><br>
+    <% if session[:task_resource_type] == "Human resource" %>
+      <% @human_resources.each do |human_resource| %>
+        <% records = TaskResource.where(:human_resource_id => human_resource.id) %>
+        <% if records.count == 0 %>
+          <tr>
+            <td><%= human_resource.id %> - <%= human_resource.name %></td>
+            <td colspan ='3' class="text-center">No allocations</td>
+            <td>
+              <a href="<%= edit_task_resource_path(human_resource) %>"><button type="button">Edit</button></a>
+            </td>
+          </tr>
+        <% else %>
+          <% resource, *tail = records %>
+          <tr>
+            <td rowspan='<%= records.count * 2 - 1 %>'><%= human_resource.id %> - <%= human_resource.name %></td>
+            <td><%= resource.task_id %> - <%= Task.find(resource.task_id).title %></td>
+            <td><%= resource.duration %></td>
+            <td><%= resource.capacity %></td>
+            <td rowspan='<%= records.count * 2 - 1 %>'>
+              <a href="<%= edit_task_resource_path(human_resource) %>"><button type="button">Edit</button></a>
+            </td>
+          </tr>
+          <% tail.each do |resource| %>
+            <tr>
+              <td><%= resource.task_id %> - <%= Task.find(resource.task_id).title %></td>
+              <td><%= resource.duration %></td>
+              <td><%= resource.capacity %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <% @tasks.each do |task| %>
+        <% records = TaskResource.where(:task_id => task.id) %>
+
+        <% if records.count == 0 %>
+          <tr>
+            <td><%= task.id %> - <%= task.name %></td>
+            <td colspan ='3' class="text-center">No allocations</td>
+            <td>
+              <a href="<%= edit_task_resource_path(task) %>"><button type="button">Edit</button></a>
+            </td>
+          </tr>
+        <% else %>
+          <% resource, *tail = records %>
+          <tr>
+            <td rowspan='<%= records.count * 2 - 1 %>'><%= task.id %> - <%= task.title %></td>
+            <td><%= resource.human_resource_id %> - <%= HumanResource.find(resource.human_resource_id).name %></td>
+            <td><%= resource.duration %></td>
+            <td><%= resource.capacity %></td>
+            <td rowspan='<%= records.count * 2 - 1 %>'>
+              <a href="<%= edit_task_resource_path(task) %>"><button type="button">Edit</button></a>
+            </td>
+          </tr>
+          <% tail.each do |resource| %>
+            <tr>
+              <td><%= resource.id %></td>
+              <td><%= resource.human_resource_id %> - <%= HumanResource.find(resource.human_resource_id).name %></td>
+              <td><%= resource.duration %></td>
+              <td><%= resource.capacity %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      <% end %>
     <% end %>
   </tbody>
 </table>

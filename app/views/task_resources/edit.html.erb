@@ -2,12 +2,64 @@
 
 <h1>Edit Task</h1>
 
-<%= render "error_task_resource" %>
-
-<%= form_for(@task_resource, method: 'patch') do |f| %>
-  Task id: <%= f.text_field :task_id %>
-  Human resource id: <%= f.text_field :human_resource_id %>
-  Duration: <%= f.text_field :duration %>
-  Capacity (number of people required): <%= f.text_field :capacity %>
+<%= form_with(url: task_resource_path(params[:id]), method: :patch, local: true) do |f| %>
   <%= f.submit "Save changes" %>
+  <br>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <% if session[:task_resource_type] == "Human resource" %>
+          <th>Task ID</th>
+          <th>Title</th>
+        <% else %>
+          <th>Human resource ID</th>
+          <th>Title</th>
+        <% end %>
+
+        <th>Duration</th>
+        <th>Capacity (number of people required)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if session[:task_resource_type] == "Human resource" %>
+        <% @tasks.each do |record| %>
+          <% resource = TaskResource.find_by(:human_resource_id => params[:id], :task_id => record.id) %>
+
+          <tr>
+            <td><%= record.id %></td>
+            <td><%= record.title %></td>
+
+            <%= f.fields_for :values, index: record.id do |r| %>
+              <% if resource.blank? %>
+                <td><%= r.text_field :duration %></td>
+                <td><%= r.text_field :capacity %></td>
+              <% else %>
+                <td><%= r.text_field :duration, value: resource.duration %></td>
+                <td><%= r.text_field :capacity, value: resource.capacity %></td>
+              <% end %>
+            <% end %>
+          </tr>
+        <% end %>
+      <% else %>
+        <% @human_resources.each do |record| %>
+          <% resource = TaskResource.find_by(:task_id => params[:id], :human_resource_id => record.id) %>
+
+          <tr>
+            <td><%= record.id %></td>
+            <td><%= record.name %></td>
+            <%= f.fields_for :values, index: record.id do |r| %>
+              <% if resource.blank? %>
+                <td><%= r.text_field :duration %></td>
+                <td><%= r.text_field :capacity %></td>
+              <% else %>
+                <td><%= r.text_field :duration, value: resource.duration %></td>
+                <td><%= r.text_field :capacity, value: resource.capacity %></td>
+              <% end %>
+            <% end %>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
 <% end %>

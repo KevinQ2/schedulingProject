@@ -11,14 +11,13 @@
       <th>Instances</th>
       <th>Action</th>
     </tr>
-  </thead><br>
+  </thead>
 
   <% @human_resources.each do |human_resource| %>
     <tr>
       <td><%= human_resource.name %></td>
       <td><%= human_resource.instances %></td>
       <td>
-        <a href="<%= human_resource_path(human_resource) %>"><button type="button">Show</button></a>
         <a href="<%= edit_human_resource_path(human_resource) %>"><button type="button">Edit</button></a>
         <a href="<%= delete_human_resource_path(human_resource) %>"><button type="button">Delete</button></a>
       </td>

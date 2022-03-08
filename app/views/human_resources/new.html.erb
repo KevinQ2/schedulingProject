@@ -3,9 +3,8 @@
 <h1>Create new human resource</h1>
 <%= render "error_human_resource" %>
 
-
 <%= form_for(@human_resource, method: 'post') do |f| %>
-  Name: <%= f.text_field :name %>
-  Instances: <%= f.text_field :instances %>
+  <%= render(:partial=> 'form', :locals => {:f => f}) %>
+  <br>
   <%= f.submit "Create Human resource" %>
 <% end %>

@@ -1,30 +1,27 @@
 Rails.application.routes.draw do
 
-  get 'organization_users/index'
-  get 'organization_users/new'
-  get 'organization_users/show'
-  get 'organization_users/edit'
-  get 'organization_users/delete'
-  get 'organization_user/index'
-  get 'organization_user/new'
-  get 'organization_user/show'
-  get 'organization_user/edit'
-  get 'organization_user/delete'
   get 'home', to: 'home_page#index'
 
   root :to => 'sessions#new'
   get 'login', to: 'sessions#new'
   post 'login', to: 'sessions#create'
+  delete 'log_out', to: 'sessions#destroy'
 
-  get 'organization/:id/users', to: 'users#index'
+  patch 'users/:id/change_password', to: 'users#update_password'
+
+  patch 'organization_users/new', to: 'organization_users#update_new'
 
   post 'project/:id', to: 'projects#generate_schedule', as: "generate_schedule"
-  get 'project/:id/delete', to: 'projects#delete_schedule', as: "delete_schedule"
-  post 'project/:id/delete', to: 'projects#destroy_schedule'
+  delete 'projects/:id/delete_schedule', to: 'projects#destroy_schedule'
+
+  patch 'task/:id/edit_precedences', to: 'tasks#update_precedences'
+
+  post 'task_resources', to: 'task_resources#update_index'
 
   resources :users, :except => [:index] do
     member do
       get :delete
+      get :change_password
     end
   end
 
@@ -34,13 +31,13 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :organization_users do
+  resources :organization_users, :except => [:show] do
     member do
       get :delete
     end
   end
 
-  resources :projects do
+  resources :projects, :except => [:index] do
     member do
       get :delete
       get :view_schedule
@@ -48,17 +45,20 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :tasks do
+  resources :tasks, :except => [:show] do
+    member do
+      get :delete
+      get :edit_precedences
+    end
+  end
+
+  resources :human_resources, :except => [:show] do
     member do
       get :delete
     end
   end
 
-  resources :human_resources do
-    member do
-      get :delete
-    end
-  end
+  resources :task_resources, :except => [:show, :new, :create, :destroy]
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

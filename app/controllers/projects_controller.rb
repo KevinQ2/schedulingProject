@@ -20,12 +20,25 @@ class ProjectsController < ApplicationController
     @project.organization_id = session[:organization_id]
 
     if @project.save
-      redirect_to projects_path
+      redirect_to organization_path(session[:organization_id])
+    else
+      render "new"
     end
   end
 
   def edit
     @project = Project.find(params[:id])
+  end
+
+  def update
+    @project = Project.find(params[:id])
+    @project.attributes = project_params
+
+    if @project.save
+      redirect_to organization_path(session[:organization_id])
+    else
+      render "edit"
+    end
   end
 
   def delete
@@ -37,7 +50,7 @@ class ProjectsController < ApplicationController
     organization_id = project.organization_id
 
     if project.destroy
-      redirect_to projects_path
+      redirect_to organization_path(session[:organization_id])
     else
       render "delete"
     end
@@ -56,7 +69,7 @@ class ProjectsController < ApplicationController
       )
     end
 
-    redirect_to "show"
+    render "show"
   end
 
   def view_schedule

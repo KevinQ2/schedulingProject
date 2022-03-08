@@ -1,4 +1,14 @@
-<a href="<%= "/organization/#{@organization_user.organization_id}/users" %>">Back</a>
+<a href="<%= "/home" %>">Back</a>
+<br>
+<h1>Profile</h1>
+Username: <%= @user.username %><br>
+First name: <%= @user.first_name %><br>
+Last name: <%= @user.last_name %><br>
+Email: <%= @user.email %><br>
+Telephone: <%= @user.telephone %><br>
 
-<h1>Users#show</h1>
-<p>Find me in app/views/employees/show.html.erb</p>
+<br>
+<a href="<%= edit_user_path(@user.id) %>"><button type="button">Change details</button></a>
+<a href="<%= change_password_user_path(@user.id) %>"><button type="button">Change password</button></a>
+
+<%= button_to 'Log out', log_out_path, method: :delete %>

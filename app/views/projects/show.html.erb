@@ -1,8 +1,11 @@
-<a href="<%= projects_path %>">Back</a>
+<a href="<%= organization_path(session[:organization_id]) %>">Back</a>
 
-<h1>Project</h1>
+<h1>Project: <%= @project.name %></h1>
 <a href="<%= human_resources_path %>"><button type="button">Human resources</button></a>
 <a href="<%= tasks_path %>"><button type="button">Tasks</button></a>
+<br><br>
+<a href="<%= task_resources_path %>"><button type="button">Task/Human resource relations</button></a>
+<br><br>
 
 <% if ScheduleTask.exists?(:project_id => params[:id]) %>
   <a href="<%= view_schedule_project_path(@project.id) %>"><button type="button">View schedule</button></a>

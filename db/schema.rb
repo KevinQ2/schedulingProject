@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 2022_02_24_103252) do
   create_table "organization_users", force: :cascade do |t|
     t.bigint "organization_id"
     t.bigint "user_id"
+    t.boolean "can_edit"
     t.index ["organization_id"], name: "index_organization_users_on_organization_id"
     t.index ["user_id"], name: "index_organization_users_on_user_id"
   end

@@ -1,2 +1,36 @@
-<h1>OrganizationUsers#index</h1>
-<p>Find me in app/views/organization_users/index.html.erb</p>
+<a href="<%= organization_path(session[:organization_id]) %>">Back</a>
+
+<h1>Members</h1>
+<a href="<%= new_organization_user_path %>"><button type="button">Add member</button></a>
+
+<br>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Email</th>
+      <th>Telephone</th>
+      <th>Can edit?</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @organization_user.each do |organization_user| %>
+      <tr>
+        <% user = User.find(organization_user.user_id) %>
+        <td><%= user.username %></td>
+        <td><%= user.first_name %></td>
+        <td><%= user.last_name %></td>
+        <td><%= user.email %></td>
+        <td><%= user.telephone %></td>
+        <td><%= organization_user.can_edit %></td>
+        <td>
+          <a href="<%= edit_organization_user_path(organization_user) %>"><button type="button">Edit permissions</button></a>
+          <a href="<%= delete_organization_user_path(organization_user) %>"><button type="button">Remove</button></a>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

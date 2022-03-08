@@ -4,9 +4,7 @@
 <%= render "error_task" %>
 
 <%= form_for(@task, method: 'post') do |f| %>
-  Title: <%= f.text_field :title %>
-  Description: <%= f.text_field :description %>
-  Instances (Number of similar tasks): <%= f.text_field :instances %>
-
+  <%= render(:partial=> 'form', :locals => {:f => f}) %>
+  <br>
   <%= f.submit "Create Task" %>
 <% end %>

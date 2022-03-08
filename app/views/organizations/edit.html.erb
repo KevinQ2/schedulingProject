@@ -4,6 +4,7 @@
 <%= render "error_organization" %>
 
 <%= form_for(@organization, method: "patch") do |f| %>
-  Name: <%= f.text_field :name %>
+  <%= render(:partial=> 'form', :locals => {:f => f}) %>
+  <br>
   <%= f.submit "Save changes" %>
 <% end %>

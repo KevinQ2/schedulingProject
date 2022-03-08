@@ -4,7 +4,6 @@ class SessionsController < ApplicationController
   end
 
   def create
-    flash.alert = "session"
     @user = User.find_by(username: params[:username])
 
     if @user && @user.authenticate(params[:password])
@@ -16,7 +15,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    log_out
+    session.delete(:username)
     redirect_to(root_url)
   end
 

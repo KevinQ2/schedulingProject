@@ -1,0 +1,10 @@
+<a href="<%= user_path(@user.id) %>">Back</a>
+
+<h1>Change details</h1>
+<%= render "error_user" %>
+
+<%= form_for(@user, method: "patch") do |f| %>
+  <%= render(:partial=> 'form', :locals => {:f => f}) %>
+  <br>
+  <%= f.submit "Update details" %>
+<% end %>

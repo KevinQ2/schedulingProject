@@ -7,10 +7,6 @@ class HumanResourcesController < ApplicationController
     @human_resources = HumanResource.where(:project => session[:project_id])
   end
 
-  def show
-    @human_resource = HumanResource.find(params[:id])
-  end
-
   def new
     @human_resource = HumanResource.new
   end
@@ -28,6 +24,17 @@ class HumanResourcesController < ApplicationController
 
   def edit
     @human_resource = HumanResource.find(params[:id])
+  end
+
+  def update
+    @human_resource = HumanResource.find(params[:id])
+    @human_resource.attributes = human_resource_params
+
+    if @human_resource.save
+      redirect_to human_resources_path
+    else
+      render "edit"
+    end
   end
 
   def delete

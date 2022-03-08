@@ -7,10 +7,6 @@ class TasksController < ApplicationController
     @tasks = Task.where(:project_id => session[:project_id])
   end
 
-  def show
-    @task = Task.find(params[:id])
-  end
-
   def new
     @task = Task.new
   end
@@ -28,6 +24,58 @@ class TasksController < ApplicationController
 
   def edit
     @task = Task.find(params[:id])
+  end
+
+  def update
+    @task = Task.find(params[:id])
+    @task.attributes = task_params
+
+    if @task.save
+      redirect_to tasks_path
+    else
+      render "edit"
+    end
+  end
+
+  def edit_precedences
+    @precedences = TaskPrecedence.where(:task_id => params[:id])
+  end
+
+  def update_precedences
+    failed_delete = []
+    failed_create = []
+
+    @precedences = TaskPrecedence.where(:task_id => params[:id])
+    @precedences.each do |precedence|
+      if !precedence.destroy
+        failed_delete.push(precedence)
+      end
+    end
+
+    params[:precedences].each do |precedence|
+      if precedence != ""
+        if !TaskPrecedence.create(:task_id => params[:id], :required_task_id => precedence)
+          failed_create.push(precedence)
+        end
+      end
+    end
+
+    if (failed_create - failed_delete | failed_delete - failed_create).count == 0
+      flash.alert = "Successfully updated precedences"
+    else
+      flash.alert = ""
+      creates = failed_create - failed_delete
+      deletes = failed_delete - failed_create
+
+      if creates.count > 0
+        flash.alert += "Failed to create precedences " + creates.to_s
+      end
+      if deletes.count > 0
+        flash.alert += "Failed to delete precedences " + deletes.to_s
+      end
+    end
+
+    render "edit_precedences"
   end
 
   def delete

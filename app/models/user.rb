@@ -18,6 +18,6 @@ class User < ApplicationRecord
   validates :first_name, presence: true, length: { minimum: 2, maximum: 20}
   validates :last_name, presence: true, length: { minimum: 2, maximum: 20}
   validates :email, presence: true, format: { with: VALID_EMAIL_REGEX}, uniqueness: { case_sensitive: false}
-  validates :telephone, presence: true, format: { with: VALID_TELEPHONE_REGEX}
+  validates :telephone, presence: true, format: { with: VALID_TELEPHONE_REGEX}, uniqueness: {case_sensitive: false}
 
 end

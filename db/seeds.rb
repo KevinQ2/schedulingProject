@@ -8,7 +8,7 @@
 
 master_users = [
   ["user1", "pass1", "bob", "johnson", "bob.johnson@gmail.com", "01234123456"],
-  ["user2", "pass2", "bob", "johnson", "bob.johnson@gmail.com", "01234123456"]
+  ["user2", "pass2", "bill", "bobby", "bill.bobby@gmail.com", "01234123457"]
 ]
 
 master_users.each do |temp|
@@ -34,13 +34,14 @@ master_organizations.each do |temp|
 end
 
 master_organization_user = [
-  [1, 1]
+  [1, 1, true]
 ]
 
 master_organization_user.each do |temp|
   organization_user = OrganizationUser.create(
     organization_id: temp[0],
-    user_id: temp[1]
+    user_id: temp[1],
+    can_edit: temp[2]
   )
 end
 

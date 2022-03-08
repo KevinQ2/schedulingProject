@@ -1,0 +1,26 @@
+<a href="<%= tasks_path %>">Back</a>
+
+<h1>Edit precedence</h1>
+
+<%= form_with(url: edit_precedences_task_path, method: "patch", local: true) do |f| %>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Checkbox</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= f.collection_check_boxes :precedences, Task.where(:project_id => session[:project_id]), :id, :title do |p| %>
+        <tr>
+          <td><%= p.object.id %></td>
+          <td><%= p.object.title %></td>
+          <td><%= p.check_box checked: @precedences.exists?(:task_id => params[:id], :required_task_id => p.object.id) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= f.submit "Save changes" %>
+<% end %>

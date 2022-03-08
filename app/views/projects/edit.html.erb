@@ -1,6 +1,10 @@
-<a href="<%= projects_path %>">Back</a>
+<a href="<%= organization_path(session[:organization_id]) %>">Back</a>
 
 <h1>Edit Project</h1>
 <%= render "error_project" %>
 
-<p>Find me in app/views/projects/edit.html.erb</p>
+<%= form_for(@project, method: "patch") do |f| %>
+  <%= render(:partial=> 'form', :locals => {:f => f}) %>
+  <br>
+  <%= f.submit "Save changes" %>
+<% end %>

@@ -3,4 +3,8 @@
 <h1>Edit Task</h1>
 <%= render "error_task" %>
 
-<p>Find me in app/views/tasks/edit.html.erb</p>
+<%= form_for(@task, method: "patch") do |f| %>
+  <%= render(:partial=> 'form', :locals => {:f => f}) %>
+  <br>
+  <%= f.submit "Save changes" %>
+<% end %>
