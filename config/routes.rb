@@ -9,14 +9,10 @@ Rails.application.routes.draw do
 
   patch 'users/:id/change_password', to: 'users#update_password'
 
-  patch 'organization_users/new', to: 'organization_users#update_new'
-
   post 'projects/:id', to: 'projects#generate_schedule', as: "generate_schedule"
   delete 'projects/:id/delete_schedule', to: 'projects#destroy_schedule'
 
   patch 'tasks/:id/edit_precedences', to: 'tasks#update_precedences'
-
-  post 'task_resources', to: 'task_resources#update_index'
 
   resources :users, :except => [:index] do
     member do

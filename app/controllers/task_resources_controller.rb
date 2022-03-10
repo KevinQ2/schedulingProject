@@ -12,22 +12,11 @@ class TaskResourcesController < ApplicationController
     @capacity_conflicts = helpers.get_capacity_conflicts(session[:project_id])
     @unallocated_conflicts = helpers.get_unallocated_conflicts(session[:project_id])
 
-    if session[:task_resource_type] == nil
+    if params[:type] != nil
+      session[:task_resource_type] = params[:type]
+    elsif session[:task_resource_type] == nil
       session[:task_resource_type] = "Task"
     end
-
-  end
-
-  def update_index
-    @tasks = Task.where(:project_id => session[:project_id])
-    @human_resources = HumanResource.where(:project_id => session[:project_id])
-    @task_resources = TaskResource.where(:project_id => session[:project_id])
-
-    @capacity_conflicts = helpers.get_capacity_conflicts(session[:project_id])
-    @unallocated_conflicts = helpers.get_unallocated_conflicts(session[:project_id])
-
-    session[:task_resource_type] = params[:type]
-    render "index"
   end
 
   def edit

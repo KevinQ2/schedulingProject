@@ -9,15 +9,11 @@ class OrganizationUsersController < ApplicationController
 
   def new
     @organization_user = OrganizationUser.new
-    if session[:organization_user_type] == nil
+    if params[:type] != nil
+      session[:organization_user_type] = params[:type]
+    elsif session[:organization_user_type] == nil
       session[:organization_user_type] = "Username"
     end
-  end
-
-  def update_new
-    @organization_user = OrganizationUser.new
-    session[:organization_user_type] = params[:type]
-    render "new"
   end
 
   def create

@@ -5,7 +5,7 @@
 <%= render "error_unallocated" %>
 
 
-<%= form_with(url: task_resources_path, method: "post", remote: true) do |f| %>
+<%= form_with(url: task_resources_path, method: "get", remote: true) do |f| %>
   <%= f.label :type, "Display by: " %>
   <%= f.select :type, options_for_select(["Human resource", "Task"], :selected => session[:task_resource_type]), {},
     :onchange => "this.form.submit();" %>
@@ -34,7 +34,7 @@
         <% records = TaskResource.where(:human_resource_id => human_resource.id) %>
         <% if records.count == 0 %>
           <tr>
-            <td><%= human_resource.id %> - <%= human_resource.name %></td>
+            <td><%= human_resource.name %></td>
             <td colspan ='3' class="text-center">No allocations</td>
             <td>
               <a href="<%= edit_task_resource_path(human_resource) %>"><button type="button">Edit</button></a>
@@ -43,8 +43,8 @@
         <% else %>
           <% resource, *tail = records %>
           <tr>
-            <td rowspan='<%= records.count * 2 - 1 %>'><%= human_resource.id %> - <%= human_resource.name %></td>
-            <td><%= resource.task_id %> - <%= Task.find(resource.task_id).title %></td>
+            <td rowspan='<%= records.count * 2 - 1 %>'><%= human_resource.name %></td>
+            <td><%= Task.find(resource.task_id).title %></td>
             <td><%= resource.duration %></td>
             <td><%= resource.capacity %></td>
             <td rowspan='<%= records.count * 2 - 1 %>'>
@@ -53,7 +53,7 @@
           </tr>
           <% tail.each do |resource| %>
             <tr>
-              <td><%= resource.task_id %> - <%= Task.find(resource.task_id).title %></td>
+              <td><%= Task.find(resource.task_id).title %></td>
               <td><%= resource.duration %></td>
               <td><%= resource.capacity %></td>
             </tr>
@@ -66,7 +66,7 @@
 
         <% if records.count == 0 %>
           <tr>
-            <td><%= task.id %> - <%= task.title %></td>
+            <td><%= task.title %></td>
             <td colspan ='3' class="text-center">No allocations</td>
             <td>
               <a href="<%= edit_task_resource_path(task) %>"><button type="button">Edit</button></a>
@@ -75,8 +75,8 @@
         <% else %>
           <% resource, *tail = records %>
           <tr>
-            <td rowspan='<%= records.count * 2 - 1 %>'><%= task.id %> - <%= task.title %></td>
-            <td><%= resource.human_resource_id %> - <%= HumanResource.find(resource.human_resource_id).name %></td>
+            <td rowspan='<%= records.count * 2 - 1 %>'><%= task.title %></td>
+            <td><%= HumanResource.find(resource.human_resource_id).name %></td>
             <td><%= resource.duration %></td>
             <td><%= resource.capacity %></td>
             <td rowspan='<%= records.count * 2 - 1 %>'>
@@ -86,7 +86,7 @@
           <% tail.each do |resource| %>
             <tr>
               <td><%= resource.id %></td>
-              <td><%= resource.human_resource_id %> - <%= HumanResource.find(resource.human_resource_id).name %></td>
+              <td><%= HumanResource.find(resource.human_resource_id).name %></td>
               <td><%= resource.duration %></td>
               <td><%= resource.capacity %></td>
             </tr>

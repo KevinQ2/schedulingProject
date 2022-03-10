@@ -1,4 +1,23 @@
 module PriorityRuleHelper
+  include ScheduleHelper
+
+  def fix_activity_list(old, new, completed)
+    if old.length == 0
+      return new
+    end
+
+    old.each do |task|
+      if check_precedence_feasible(completed, task)
+        new.push(task)
+        completed[task] = 1
+        old.delete(task)
+        break
+      end
+    end
+
+    return fix_activity_list(old, new, completed)
+  end
+
   # activity based
   def SPT(tasks)
     task_values = {}
@@ -167,7 +186,7 @@ module PriorityRuleHelper
     end
 
     task_values.keys.each do |key|
-      task_values[key] += TaskResource.where(:task_id => task).first.duration
+      task_values[key] += TaskResource.where(:task_id => key).first.duration
     end
 
     task_values.sort_by{|k, v| v}.each do |k, v|
@@ -190,15 +209,15 @@ module PriorityRuleHelper
 
     # transform to earliest finish time
     task_values.keys.each do |key|
-      task_values[key] += TaskResource.where(:task_id => task).first.duration
+      task_values[key] += TaskResource.where(:task_id => key).first.duration
     end
 
     # get latest finish times
-    latest_starts = get_latest_finish_times(k, task_values, latest_starts)
+    latest_starts = get_latest_finish_times(task_values, {})
 
     # transform to latest start times
     latest_starts.keys.each do |key|
-      latest_starts[key] -= TaskResource.where(:task_id => key).first
+      latest_starts[key] -= TaskResource.where(:task_id => key).first.duration
     end
 
     latest_starts.sort_by{|k, v| v}.each do |k, v|
@@ -221,7 +240,7 @@ module PriorityRuleHelper
 
     # transform to earliest finish time
     task_values.keys.each do |key|
-      task_values[key] += TaskResource.where(:task_id => task).first.duration
+      task_values[key] += TaskResource.where(:task_id => key).first.duration
     end
 
     # get latest finish times
@@ -247,7 +266,7 @@ module PriorityRuleHelper
 
     # transform to earliest finish time
     earliest_finish_times.keys.each do |key|
-      earliest_finish_times[key] += TaskResource.where(:task_id => task).first.duration
+      earliest_finish_times[key] += TaskResource.where(:task_id => key).first.duration
     end
 
     # get latest finish times
@@ -312,12 +331,12 @@ module PriorityRuleHelper
     predecessors = TaskPrecedence.where(:task_id => current_task)
 
     predecessors.each do |predecessor|
-      # if start time has not already been computed for the task
-      if earliest_starts[predecessor.task_id] == nil
-        earliest_starts = get_earliest_start_times(predecessor.task_id, earliest_starts)
+      # compute if not already computed
+      if earliest_starts[predecessor.required_task_id] == nil
+        earliest_starts = get_earliest_start_times(predecessor.required_task_id, earliest_starts)
       end
 
-      start_time = earliest_starts[predecessor.task_id] + TaskResource.where(:task_id => predecessor.task_id).first.duration
+      start_time = earliest_starts[predecessor.required_task_id] + TaskResource.where(:task_id => predecessor.required_task_id).first.duration
 
       if start_time > latest_start
         latest_start = start_time

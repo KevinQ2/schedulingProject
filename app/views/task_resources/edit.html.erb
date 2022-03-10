@@ -8,14 +8,34 @@
   <%= f.submit "Save changes" %>
   <br>
 
+  <% if session[:task_resource_type] == "Human resource" %>
+    <% human_resource = HumanResource.find(params[:id]) %>
+    <p>Human resource: <%= human_resource.name %></p>
+    <p>Instances: <%= human_resource.instances %></p>
+  <% else %>
+    <% task = Task.find(params[:id]) %>
+    <p>Task: <%= task.title %></p>
+    <p>Description: <%= task.description %></p>
+
+    <%
+      precedences = TaskPrecedence.where(:task_id => task.id)
+      precedence_list = []
+      precedences.each do |precedence|
+        precedence_list.push(Task.find(precedence.required_task_id).title)
+      end
+    %>
+
+    <p>Precedences<%= precedence_list %></td></p>
+    <p>Instances: <%= task.instances %></p>
+  <% end %>
+
   <table class="table table-bordered">
     <thead>
       <tr>
         <% if session[:task_resource_type] == "Human resource" %>
           <th>Title</th>
         <% else %>
-          <th>Human resource ID</th>
-          <th>Title</th>
+          <th>Human resource</th>
         <% end %>
 
         <th>Duration</th>
@@ -46,12 +66,11 @@
           <% resource = TaskResource.find_by(:task_id => params[:id], :human_resource_id => record.id) %>
 
           <tr>
-            <td><%= record.id %></td>
             <td><%= record.name %></td>
             <%= f.fields_for :values, index: record.id do |r| %>
               <% if resource.blank? %>
                 <td><%= r.number_field :duration, min: 0 %></td>
-                <td><%= r.number_field :capacity, in: 0..HumanResource.find(params[:id]).instances %></td>
+                <td><%= r.number_field :capacity, in: 0..record.instances %></td>
               <% else %>
                 <td><%= r.number_field :duration, min: 0, value: resource.duration %></td>
                 <td><%= r.number_field :capacity, in: 0..record.instances, value: resource.capacity %></td>

@@ -8,6 +8,26 @@ class ProjectsController < ApplicationController
     @capacity_conflicts = helpers.get_capacity_conflicts(@project.id)
     @cycle_conflicts = helpers.get_cycles(@project.id)
     @unallocated_conflicts = helpers.get_unallocated_conflicts(@project.id)
+
+    @schedules = []
+    @schemes = []
+    @priority_rules = []
+
+    if @capacity_conflicts.count == 0 and @cycle_conflicts.count == 0 and @unallocated_conflicts.count == 0
+      if params[:schemes] != nil and params[:priority_rules] != nil
+        @schemes = params[:schemes]
+        @schemes.delete("")
+        @priority_rules = params[:priority_rules]
+        @priority_rules.delete("")
+
+        @priority_rules.each do |rule|
+          @schemes.each do |scheme|
+            schedule = helpers.generate_schedule(@project, scheme, rule)
+            @schedules.push([scheme, rule, schedule.max_by{|k, v| v[0]}[1][0]])
+          end
+        end
+      end
+    end
   end
 
   def new
@@ -60,6 +80,7 @@ class ProjectsController < ApplicationController
     @capacity_conflicts = helpers.get_capacity_conflicts(@project.id)
     @cycle_conflicts = helpers.get_cycles(@project.id)
     @unallocated_conflicts = helpers.get_unallocated_conflicts(@project.id)
+    @schedules = []
 
     if @capacity_conflicts.count == 0 and @cycle_conflicts.count == 0 and @unallocated_conflicts.count == 0
       schedule = helpers.generate_schedule(@project, params[:scheme], params[:priority_rule])

@@ -73,32 +73,36 @@ module ScheduleHelper
   end
 
   def priority_rule(tasks, rule)
+    activity_list = nil
+
     if rule == "SPT"
-      return SPT(tasks)
+      activity_list = SPT(tasks)
     elsif rule == "LPT"
-      return LPT(tasks)
+      activity_list = LPT(tasks)
     elsif rule == "MIS"
-      return MIS(tasks)
+      activity_list = MIS(tasks)
     elsif rule == "MTS"
-      return MTS(tasks)
+      activity_list = MTS(tasks)
     elsif rule == "LNRJ"
-      return LNRJ(tasks)
+      activity_list = LNRJ(tasks)
     elsif rule == "GRPW"
-      return GRPW(tasks)
+      activity_list = GRPW(tasks)
     elsif rule == "EST"
-      return EST(tasks)
+      activity_list = EST(tasks)
     elsif rule == "EFT"
-      return EFT(tasks)
+      activity_list = EFT(tasks)
     elsif rule == "LST"
-      return LST(tasks)
+      activity_list = LST(tasks)
     elsif rule == "LFT"
-      return LFT(tasks)
+      activity_list = LFT(tasks)
     elsif rule == "MSLK"
-      return MSLK(tasks)
+      activity_list = MSLK(tasks)
     elsif rule == "GRWC"
-      return GRWC(tasks)
+      activity_list = GRWC(tasks)
     elsif rule == "GCRWC"
-      return GCRWC(tasks)
+      activity_list = GCRWC(tasks)
     end
+
+    return fix_activity_list(activity_list, [], {})
   end
 end
