@@ -16,8 +16,8 @@
       <tr>
         <td><%= schedule.start_date %></td>
         <td><%= schedule.end_date %></td>
-        <td><%= schedule.task_resource.task_id %></td>
-        <td><%= schedule.task_resource.human_resource_id %></td>
+        <td><%= schedule.task_resource.task.title %></td>
+        <td><%= schedule.task_resource.human_resource.name %></td>
         <td><%= schedule.task_resource.capacity %></td>
       </tr>
     <% end %>

@@ -5,6 +5,7 @@ class TasksController < ApplicationController
 
   def index
     @tasks = Task.where(:project_id => session[:project_id])
+    @cycle_conflicts = helpers.get_cycles(session[:project_id])
   end
 
   def new
@@ -38,14 +39,25 @@ class TasksController < ApplicationController
   end
 
   def edit_precedences
-    @precedences = TaskPrecedence.where(:task_id => params[:id])
+    @task = Task.find(params[:id])
+    @tasks = Task.where(:project_id => session[:project_id])
+    @tasks = @tasks.where.not(:id => @task.id)
+    @precedences = TaskPrecedence.where(:task_id => @task.id)
+
+    @cycle_conflicts = helpers.get_cycles(session[:project_id])
   end
 
   def update_precedences
     failed_delete = []
     failed_create = []
 
+    @task = Task.find(params[:id])
+    @tasks = Task.where(:project_id => session[:project_id])
+    @tasks = @tasks.where.not(:id => @task.id)
     @precedences = TaskPrecedence.where(:task_id => params[:id])
+
+    @cycle_conflicts = helpers.get_cycles(session[:project_id])
+
     @precedences.each do |precedence|
       if !precedence.destroy
         failed_delete.push(precedence)
@@ -75,7 +87,7 @@ class TasksController < ApplicationController
       end
     end
 
-    render "edit_precedences"
+    redirect_to tasks_path
   end
 
   def delete

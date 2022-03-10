@@ -1,0 +1,8 @@
+<% if @capacity_conflicts.count > 0 %>
+  <p>The project contains capacity conflicts:</p>
+  <ul>
+      <% @capacity_conflicts.each do |capacity| %>
+          <li><%= capacity %></li>
+      <% end %>
+  </ul>
+<% end %>

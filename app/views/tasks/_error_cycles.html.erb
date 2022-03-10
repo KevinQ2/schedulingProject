@@ -1,0 +1,8 @@
+<% if @cycle_conflicts.count > 0 %>
+  <p>The project contains cycles:</p>
+  <ul>
+      <% @cycle_conflicts.each do |cycle| %>
+          <li><%= cycle.map{|id| Task.find(id).title} %></li>
+      <% end %>
+  </ul>
+<% end %>

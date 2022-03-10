@@ -11,10 +11,10 @@ Rails.application.routes.draw do
 
   patch 'organization_users/new', to: 'organization_users#update_new'
 
-  post 'project/:id', to: 'projects#generate_schedule', as: "generate_schedule"
+  post 'projects/:id', to: 'projects#generate_schedule', as: "generate_schedule"
   delete 'projects/:id/delete_schedule', to: 'projects#destroy_schedule'
 
-  patch 'task/:id/edit_precedences', to: 'tasks#update_precedences'
+  patch 'tasks/:id/edit_precedences', to: 'tasks#update_precedences'
 
   post 'task_resources', to: 'task_resources#update_index'
 

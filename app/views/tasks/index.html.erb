@@ -1,13 +1,14 @@
 <a href="<%= project_path(session[:project_id]) %>">Back</a>
 
 <h1>Tasks</h1>
+<%= render "error_cycles" %>
+
 <a href="<%= new_task_path %>"><button type="button">Create new task</button></a>
 
 <br>
 <table class="table table-bordered">
   <thead>
     <tr>
-      <th>Task ID</th>
       <th>Title</th>
       <th>Description</th>
       <th>Instances</th>
@@ -18,7 +19,6 @@
   <tbody>
     <% @tasks.each do |task| %>
       <tr>
-        <td><%= task.id %></td>
         <td><%= task.title %></td>
         <td><%= task.description %></td>
         <td><%= task.instances %></td>
@@ -26,7 +26,7 @@
           precedences = TaskPrecedence.where(:task_id => task.id)
           precedence_list = []
           precedences.each do |precedence|
-            precedence_list.push(precedence.required_task_id)
+            precedence_list.push(Task.find(precedence.required_task_id).title)
           end
         %>
         <td><%= precedence_list %></td>

@@ -1,18 +1,60 @@
 <a href="<%= organization_path(session[:organization_id]) %>">Back</a>
 
 <h1>Project: <%= @project.name %></h1>
-<a href="<%= human_resources_path %>"><button type="button">Human resources</button></a>
-<a href="<%= tasks_path %>"><button type="button">Tasks</button></a>
-<br><br>
-<a href="<%= task_resources_path %>"><button type="button">Task/Human resource relations</button></a>
-<br><br>
+<h3>Environment</h3>
+<a href="<%= human_resources_path %>"><button type="button">Define human resources</button></a><br>
+<a href="<%= tasks_path %>"><button type="button">Define tasks</button></a><br><br>
+<a href="<%= task_resources_path %>"><button type="button">Define possible allocations</button></a><br><br>
+
+<h3>Schedule</h3>
+
+<% if @cycle_conflicts.count > 0 %>
+  <p>The project contains cycles:</p>
+  <ul>
+      <% @cycle_conflicts.each do |cycle| %>
+          <li><%= cycle.map{|id| Task.find(id).title} %></li>
+      <% end %>
+  </ul>
+<% end %>
+<% if @capacity_conflicts.count > 0 %>
+  <p>The project capacity conflicts:</p>
+  <ul>
+      <% @capacity_conflicts.each do |capacity| %>
+          <li><%= capacity %></li>
+      <% end %>
+  </ul>
+<% end %>
+<% if @unallocated_conflicts.count > 0 %>
+  <p>The project contains unallocated tasks:<%= @unallocated_conflicts.map{|id| Task.find(id).title} %></p>
+<% end %>
 
 <% if ScheduleTask.exists?(:project_id => params[:id]) %>
   <a href="<%= view_schedule_project_path(@project.id) %>"><button type="button">View schedule</button></a>
   <a href="<%= delete_schedule_project_path(@project.id) %>"><button type="button">Delete schedule</button></a>
 <% else %>
+  <% if @cycle_conflicts.count == 0 and @capacity_conflicts.count == 0 and @unallocated_conflicts.count == 0 %>
+    <%= form_with(url: generate_schedule_path, method: 'post', local: true) do |f| %>
+      <%= f.label :scheme, "Schedule generation scheme: " %>
+      <%= f.select :scheme, options_for_select(["Serial", "Parallel"]) %>
 
-  <%= form_for(@project, url: generate_schedule_path, method: 'post') do |f| %>
-    <%= f.submit "Generate Schedule" %>
+      <%= f.label :priority_rule, "Priority rule: " %>
+      <%= f.select :priority_rule, options_for_select([
+        ["SPT - Shortest Processing Time", "SPT"],
+        ["LPT - Longest Processing Time", "LPT"],
+        ["MIS - Most Immediate Successors", "MIS"],
+        ["MTS - Most Total Successors", "MTS"],
+        ["LNRJ - Least Non-Related Jobs", "LNRJ"],
+        ["GRPW - Greatest Rank Positional Weight", "GRPW"],
+        ["EST - Earliest Start Time", "EST"],
+        ["EFT - Earliest Finish Time", "EFT"],
+        ["LST - Latest Start Time", "LST"],
+        ["LFT - Latest Finish Time", "LFT"],
+        ["MSLK - Minimum Slack", "MSLK"],
+        ["GRWC - Greatest Resource Work Content", "GRWC"],
+        ["GCRWC - Greatest Cumulative Resource Work Content", "GCRWC"]]) %>
+      <%= f.submit "Generate Schedule" %>
+    <% end %>
+  <% else %>
+    <p>Please resolve all conflicts to be able to compute schedules</p>
   <% end %>
 <% end %>
