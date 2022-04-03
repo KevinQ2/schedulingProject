@@ -3,7 +3,7 @@
 <h1>Create new task</h1>
 <%= render "error_task" %>
 
-<%= form_for(@task, method: 'post') do |f| %>
+<%= form_for(@task, method: 'post', class: "form-2") do |f| %>
   <%= render(:partial=> 'form', :locals => {:f => f}) %>
   <br>
   <%= f.submit "Create Task" %>

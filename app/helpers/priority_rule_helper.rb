@@ -23,7 +23,7 @@ module PriorityRuleHelper
     task_values = {}
 
     tasks.each do |task|
-      record = TaskResource.where(:task_id => task).first
+      record = PotentialAllocation.where(:task_id => task).first
       task_values[task] = record.duration
     end
 
@@ -33,7 +33,7 @@ module PriorityRuleHelper
       activity_list.push(k.to_s.to_i)
     end
 
-    return activity_list
+    return activity_list, task_values
   end
 
   def LPT(tasks)
@@ -53,7 +53,7 @@ module PriorityRuleHelper
       activity_list.push(k)
     end
 
-    return activity_list
+    return activity_list, task_values
   end
 
   def MTS(tasks)
@@ -87,7 +87,7 @@ module PriorityRuleHelper
       activity_list.push(k)
     end
 
-    return activity_list
+    return activity_list, task_values
   end
 
   def LNRJ(tasks)
@@ -132,7 +132,7 @@ module PriorityRuleHelper
       activity_list.push(k)
     end
 
-    return activity_list
+    return activity_list, task_values
   end
 
   def GRPW(tasks)
@@ -140,11 +140,11 @@ module PriorityRuleHelper
     task_values = {}
 
     tasks.each do |task|
-      acc = TaskResource.where(:task_id => task).first.duration
+      acc = PotentialAllocation.where(:task_id => task).first.duration
       successors = TaskPrecedence.where(:required_task_id => task)
 
       successors.each do |successor|
-        acc += TaskResource.where(:task_id => successor.task_id).first.duration
+        acc += PotentialAllocation.where(:task_id => successor.task_id).first.duration
       end
 
       task_values[task] = acc
@@ -154,7 +154,7 @@ module PriorityRuleHelper
       activity_list.push(k)
     end
 
-    return activity_list
+    return activity_list, task_values
   end
 
   # scheduling based
@@ -172,7 +172,7 @@ module PriorityRuleHelper
       activity_list.push(k)
     end
 
-    return activity_list
+    return activity_list, task_values
   end
 
   def EFT(tasks)
@@ -186,14 +186,14 @@ module PriorityRuleHelper
     end
 
     task_values.keys.each do |key|
-      task_values[key] += TaskResource.where(:task_id => key).first.duration
+      task_values[key] += PotentialAllocation.where(:task_id => key).first.duration
     end
 
     task_values.sort_by{|k, v| v}.each do |k, v|
       activity_list.push(k)
     end
 
-    return activity_list
+    return activity_list, task_values
   end
 
   def LST(tasks)
@@ -209,7 +209,7 @@ module PriorityRuleHelper
 
     # transform to earliest finish time
     task_values.keys.each do |key|
-      task_values[key] += TaskResource.where(:task_id => key).first.duration
+      task_values[key] += PotentialAllocation.where(:task_id => key).first.duration
     end
 
     # get latest finish times
@@ -217,14 +217,14 @@ module PriorityRuleHelper
 
     # transform to latest start times
     latest_starts.keys.each do |key|
-      latest_starts[key] -= TaskResource.where(:task_id => key).first.duration
+      latest_starts[key] -= PotentialAllocation.where(:task_id => key).first.duration
     end
 
     latest_starts.sort_by{|k, v| v}.each do |k, v|
       activity_list.push(k)
     end
 
-    return activity_list
+    return activity_list, latest_starts
   end
 
   def LFT(tasks)
@@ -240,7 +240,7 @@ module PriorityRuleHelper
 
     # transform to earliest finish time
     task_values.keys.each do |key|
-      task_values[key] += TaskResource.where(:task_id => key).first.duration
+      task_values[key] += PotentialAllocation.where(:task_id => key).first.duration
     end
 
     # get latest finish times
@@ -250,7 +250,7 @@ module PriorityRuleHelper
       activity_list.push(k)
     end
 
-    return activity_list
+    return activity_list, latest_finish_times
   end
 
   def MSLK(tasks)
@@ -266,23 +266,23 @@ module PriorityRuleHelper
 
     # transform to earliest finish time
     earliest_finish_times.keys.each do |key|
-      earliest_finish_times[key] += TaskResource.where(:task_id => key).first.duration
+      earliest_finish_times[key] += PotentialAllocation.where(:task_id => key).first.duration
     end
 
     # get latest finish times
     latest_finish_times = get_latest_finish_times(earliest_finish_times, {})
 
     # get slack values
-    slask_values = {}
+    slack_values = {}
     tasks.each do |task|
-      slask_values[task] = latest_finish_times[task] - earliest_finish_times[task]
+      slack_values[task] = latest_finish_times[task] - earliest_finish_times[task]
     end
 
-    slask_values.sort_by{|k, v| v}.each do |k, v|
+    slack_values.sort_by{|k, v| v}.each do |k, v|
       activity_list.push(k)
     end
 
-    return activity_list
+    return activity_list, slack_values
   end
 
   # resource based
@@ -291,7 +291,7 @@ module PriorityRuleHelper
     task_values = {}
 
     tasks.each do |task|
-      record = TaskResource.where(:task_id => task).first
+      record = PotentialAllocation.where(:task_id => task).first
       task_values[task] = record.duration * record.capacity
     end
 
@@ -299,7 +299,7 @@ module PriorityRuleHelper
       activity_list.push(k)
     end
 
-    return activity_list
+    return activity_list, task_values
   end
 
   def GCRWC(tasks)
@@ -307,12 +307,12 @@ module PriorityRuleHelper
     task_values = {}
 
     tasks.each do |task|
-      record = TaskResource.where(:task_id => task).first
+      record = PotentialAllocation.where(:task_id => task).first
       acc = record.duration * record.capacity
 
       successors = TaskPrecedence.where(:required_task_id => task)
       successors.each do |successor|
-        record = TaskResource.where(:task_id => successor.task_id).first
+        record = PotentialAllocation.where(:task_id => successor.task_id).first
         acc += record.duration * record.capacity
       end
 
@@ -323,9 +323,10 @@ module PriorityRuleHelper
       activity_list.push(k)
     end
 
-    return activity_list
+    return activity_list, task_values
   end
 
+  # computation helpers
   def get_earliest_start_times(current_task, earliest_starts)
     latest_start = 0
     predecessors = TaskPrecedence.where(:task_id => current_task)
@@ -336,7 +337,7 @@ module PriorityRuleHelper
         earliest_starts = get_earliest_start_times(predecessor.required_task_id, earliest_starts)
       end
 
-      start_time = earliest_starts[predecessor.required_task_id] + TaskResource.where(:task_id => predecessor.required_task_id).first.duration
+      start_time = earliest_starts[predecessor.required_task_id] + PotentialAllocation.where(:task_id => predecessor.required_task_id).first.duration
 
       if start_time > latest_start
         latest_start = start_time
@@ -357,7 +358,7 @@ module PriorityRuleHelper
         earliest_start = nil
 
         successors.each do |successor|
-          start_time = latest_finish_times[successor.task_id] - TaskResource.where(:task_id => successor.task_id).first.duration
+          start_time = latest_finish_times[successor.task_id] - PotentialAllocation.where(:task_id => successor.task_id).first.duration
 
           if earliest_start == nil
             earliest_start = start_time

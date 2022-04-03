@@ -1,0 +1,26 @@
+<a href="<%= project_path(session[:project_id]) %>">Back</a>
+
+<h1>Teams</h1>
+<a href="<%= new_team_path %>"><button type="button">Create new team</button></a>
+
+<br>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Population</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <% @teams.each do |team| %>
+    <tr>
+      <td><%= team.name %></td>
+      <td><%= team.population %></td>
+      <td>
+        <a href="<%= edit_team_path(team) %>"><button type="button">Edit</button></a>
+        <a href="<%= delete_team_path(team) %>"><button type="button">Delete</button></a>
+      </td>
+    </tr><br>
+  <% end %>
+</table>

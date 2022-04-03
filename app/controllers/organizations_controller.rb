@@ -6,15 +6,9 @@ class OrganizationsController < ApplicationController
   def index
     @organizations = []
 
-    OrganizationUser.where(:user_id => current_user).each do |organization_user|
-      @organizations.push(Organization.find(organization_user.organization_id))
+    OrganizationMember.where(:user_id => current_user).each do |organization_member|
+      @organizations.push(Organization.find(organization_member.organization_id))
     end
-  end
-
-  def show
-    @organization = Organization.find(params[:id])
-    @projects = Project.where(:organization_id => params[:id])
-    @users = OrganizationUser.where(:organization_id => params[:id])
   end
 
   def new
@@ -25,11 +19,17 @@ class OrganizationsController < ApplicationController
     @organization = Organization.new(organization_params)
 
     if @organization.save
-      OrganizationUser.create(:organization_id => @organization.id, :user_id => current_user.id)
+      OrganizationMember.create(:organization_id => @organization.id, :user_id => current_user.id)
       redirect_to organizations_path
     else
       render "new"
     end
+  end
+
+  def show
+    @organization = Organization.find(params[:id])
+    @projects = Project.where(:organization_id => params[:id])
+    @users = OrganizationMember.where(:organization_id => params[:id])
   end
 
   def edit

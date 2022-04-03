@@ -3,7 +3,7 @@
 <h1>Edit Project</h1>
 <%= render "error_project" %>
 
-<%= form_for(@project, method: "patch") do |f| %>
+<%= form_for(@project, method: "patch", class: "form-2") do |f| %>
   <%= render(:partial=> 'form', :locals => {:f => f}) %>
   <br>
   <%= f.submit "Save changes" %>

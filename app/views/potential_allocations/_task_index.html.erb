@@ -1,0 +1,45 @@
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Task</th>
+      <th>Team</th>
+      <th>Duration</th>
+      <th>Capacity</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% tasks.each do |task| %>
+      <% records = PotentialAllocation.where(:task_id => task.id) %>
+
+      <% if records.count == 0 %>
+        <tr>
+          <td><%= task.title %></td>
+          <td colspan ='3' class="text-center">No allocations</td>
+          <td>
+            <a href="<%= edit_potential_allocation_path(task) %>"><button type="button">Edit</button></a>
+          </td>
+        </tr>
+      <% else %>
+        <% resource, *tail = records %>
+        <tr>
+          <td rowspan='<%= records.count %>'><%= task.title %></td>
+          <td><%= Team.find(resource.team_id).name %></td>
+          <td><%= resource.duration %></td>
+          <td><%= resource.capacity %></td>
+          <td rowspan='<%= records.count %>'>
+            <a href="<%= edit_potential_allocation_path(task) %>"><button type="button">Edit</button></a>
+          </td>
+        </tr>
+        <% tail.each do |resource| %>
+          <tr>
+            <td><%= Team.find(resource.team_id).name %></td>
+            <td><%= resource.duration %></td>
+            <td><%= resource.capacity %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

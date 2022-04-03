@@ -33,15 +33,17 @@ master_organizations.each do |temp|
   )
 end
 
-master_organization_user = [
-  [1, 1, true]
+master_organization_member = [
+  [1, 1, true, true, true]
 ]
 
-master_organization_user.each do |temp|
-  organization_user = OrganizationUser.create(
+master_organization_member.each do |temp|
+  organization_member = OrganizationMember.create(
     organization_id: temp[0],
     user_id: temp[1],
-    can_edit: temp[2]
+    is_host: temp[2],
+    can_edit: temp[3],
+    can_invite: temp[4]
   )
 end
 
@@ -68,8 +70,7 @@ master_tasks = [
 master_tasks.each do |temp|
   task = Task.create(
     project_id: temp[0],
-    title: temp[1],
-    instances: temp[2]
+    title: temp[1]
   )
 end
 
@@ -87,19 +88,19 @@ master_task_precedences.each do |temp|
   )
 end
 
-master_human_resources = [
+master_teams = [
   [1, "Team A", 4]
 ]
 
-master_human_resources.each do |temp|
-  human_resource = HumanResource.create(
+master_teams.each do |temp|
+  team = Team.create(
     project_id: temp[0],
     name: temp[1],
-    instances: temp[2]
+    population: temp[2]
   )
 end
 
-master_task_resources = [
+master_potential_allocations = [
   [1, 1, 1, 3, 2],
   [1, 2, 1, 4, 3],
   [1, 3, 1, 2, 4],
@@ -108,11 +109,11 @@ master_task_resources = [
   [1, 6, 1, 4, 2]
 ]
 
-master_task_resources.each do |temp|
-  task_resource = TaskResource.create(
+master_potential_allocations.each do |temp|
+  potential_allocation = PotentialAllocation.create(
     project_id: temp[0],
     task_id: temp[1],
-    human_resource_id: temp[2],
+    team_id: temp[2],
     duration: temp[3],
     capacity: temp[4]
   )

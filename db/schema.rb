@@ -15,27 +15,33 @@ ActiveRecord::Schema.define(version: 2022_02_24_103252) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "human_resources", force: :cascade do |t|
-    t.bigint "project_id"
-    t.string "name"
-    t.integer "instances"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["project_id"], name: "index_human_resources_on_project_id"
-  end
-
-  create_table "organization_users", force: :cascade do |t|
+  create_table "organization_members", force: :cascade do |t|
     t.bigint "organization_id"
     t.bigint "user_id"
+    t.boolean "is_host"
     t.boolean "can_edit"
-    t.index ["organization_id"], name: "index_organization_users_on_organization_id"
-    t.index ["user_id"], name: "index_organization_users_on_user_id"
+    t.boolean "can_invite"
+    t.index ["organization_id"], name: "index_organization_members_on_organization_id"
+    t.index ["user_id"], name: "index_organization_members_on_user_id"
   end
 
   create_table "organizations", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "potential_allocations", force: :cascade do |t|
+    t.bigint "project_id"
+    t.bigint "task_id"
+    t.bigint "team_id"
+    t.integer "duration"
+    t.integer "capacity"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["project_id"], name: "index_potential_allocations_on_project_id"
+    t.index ["task_id"], name: "index_potential_allocations_on_task_id"
+    t.index ["team_id"], name: "index_potential_allocations_on_team_id"
   end
 
   create_table "projects", force: :cascade do |t|
@@ -46,15 +52,15 @@ ActiveRecord::Schema.define(version: 2022_02_24_103252) do
     t.index ["organization_id"], name: "index_projects_on_organization_id"
   end
 
-  create_table "schedule_tasks", force: :cascade do |t|
+  create_table "schedule_allocations", force: :cascade do |t|
     t.bigint "project_id"
-    t.bigint "task_resource_id"
-    t.integer "start_date"
-    t.integer "end_date"
+    t.bigint "potential_allocations_id"
+    t.integer "start"
+    t.integer "end"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["project_id"], name: "index_schedule_tasks_on_project_id"
-    t.index ["task_resource_id"], name: "index_schedule_tasks_on_task_resource_id"
+    t.index ["potential_allocations_id"], name: "index_schedule_allocations_on_potential_allocations_id"
+    t.index ["project_id"], name: "index_schedule_allocations_on_project_id"
   end
 
   create_table "task_precedences", force: :cascade do |t|
@@ -66,27 +72,22 @@ ActiveRecord::Schema.define(version: 2022_02_24_103252) do
     t.index ["task_id"], name: "index_task_precedences_on_task_id"
   end
 
-  create_table "task_resources", force: :cascade do |t|
-    t.bigint "project_id"
-    t.bigint "task_id"
-    t.bigint "human_resource_id"
-    t.integer "duration"
-    t.integer "capacity"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["human_resource_id"], name: "index_task_resources_on_human_resource_id"
-    t.index ["project_id"], name: "index_task_resources_on_project_id"
-    t.index ["task_id"], name: "index_task_resources_on_task_id"
-  end
-
   create_table "tasks", force: :cascade do |t|
     t.bigint "project_id"
     t.string "title"
     t.string "description"
-    t.integer "instances"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["project_id"], name: "index_tasks_on_project_id"
+  end
+
+  create_table "teams", force: :cascade do |t|
+    t.bigint "project_id"
+    t.string "name"
+    t.integer "population"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["project_id"], name: "index_teams_on_project_id"
   end
 
   create_table "users", force: :cascade do |t|

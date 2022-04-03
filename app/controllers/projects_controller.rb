@@ -1,33 +1,51 @@
 class ProjectsController < ApplicationController
   before_action :redirect_if_not_logged_in
-  before_action :set_session, except: [:index, :new, :create]
+  before_action :set_session, except: [:index, :new, :create, :generate_random, :create_random]
   before_action :redirect_if_not_member
 
   def show
-    @project = Project.find(params[:id])
-    @capacity_conflicts = helpers.get_capacity_conflicts(@project.id)
-    @cycle_conflicts = helpers.get_cycles(@project.id)
-    @unallocated_conflicts = helpers.get_unallocated_conflicts(@project.id)
+    set_show_variables
+  end
 
-    @schedules = []
-    @schemes = []
-    @priority_rules = []
+  def compare_algorithms
+    set_show_variables
 
     if @capacity_conflicts.count == 0 and @cycle_conflicts.count == 0 and @unallocated_conflicts.count == 0
-      if params[:schemes] != nil and params[:priority_rules] != nil
-        @schemes = params[:schemes]
-        @schemes.delete("")
-        @priority_rules = params[:priority_rules]
-        @priority_rules.delete("")
+      @schemes = params[:schemes]
+      @schemes.delete("")
+      @priority_rules = params[:priority_rules]
+      @priority_rules.delete("")
+      @sampling = params[:sampling]
+      @sampling.delete("")
+      @schedules = []
+
+      if !@schemes.nil? and !@priority_rules.nil? and !@sampling.nil?
+        priority_hash = {}
 
         @priority_rules.each do |rule|
+          scheme_hash = {}
+
           @schemes.each do |scheme|
-            schedule = helpers.generate_schedule(@project, scheme, rule)
-            @schedules.push([scheme, rule, schedule.max_by{|k, v| v[0]}[1][0]])
+            sample_hash = {}
+
+            @sampling.each do |sample|
+              schedule = helpers.generate_schedule(@project, scheme, rule, sample, params[:bias]) #[schedule, running time]
+              sample_hash[sample] = [schedule[0].max_by{|k, v| v[0]}[1][0], schedule[1]] # scheme -> [schedule length, running time]
+            end
+
+            # scheme -> {samples -> schedule}
+            scheme_hash[scheme] = sample_schedules
           end
+
+          # [rule, {scheme -> [project length, running time]}]
+          priority_hash[rule] = scheme_hash
         end
+
+        @schedules = priority_hash
       end
     end
+
+    render "show"
   end
 
   def new
@@ -42,6 +60,30 @@ class ProjectsController < ApplicationController
       redirect_to organization_path(session[:organization_id])
     else
       render "new"
+    end
+  end
+
+  def generate_random
+    @project = Project.new
+    @generate_project = GenerateProject.new
+  end
+
+  def create_random
+    @project = Project.new(project_params)
+    @project.organization_id = session[:organization_id]
+
+    @generate_project = GenerateProject.new(project_generation_params)
+
+    # reassignment ensures both validation checks occur
+    # this ensures error messages are generated
+    valid = @project.validate
+    valid = @generate_project.validate and valid
+
+    if valid
+      helpers.generate_project(@project, @generate_project)
+      redirect_to organization_path(session[:organization_id])
+    else
+      render "generate_random"
     end
   end
 
@@ -76,21 +118,25 @@ class ProjectsController < ApplicationController
   end
 
   def generate_schedule
-    @project = Project.find(params[:id])
-    @capacity_conflicts = helpers.get_capacity_conflicts(@project.id)
-    @cycle_conflicts = helpers.get_cycles(@project.id)
-    @unallocated_conflicts = helpers.get_unallocated_conflicts(@project.id)
-    @schedules = []
+    set_show_variables
 
     if @capacity_conflicts.count == 0 and @cycle_conflicts.count == 0 and @unallocated_conflicts.count == 0
-      schedule = helpers.generate_schedule(@project, params[:scheme], params[:priority_rule])
+      if params[:submit] == "priority rule"
+        schedule = helpers.generate_schedule(@project, params[:scheme], params[:priority_rule], params[:sampling], params[:bias])
+      elsif params[:submit] == "algorithm"
+        if params[:algorithm] = "Genetic algorithm"
+          schedule = helpers.generate_genetic_schedule(@project)
+          @messages = schedule[0][1].clone
+          schedule[0] = schedule[0][0]
+        end
+      end
 
-      schedule.each do |record|
-        ScheduleTask.create(
+      schedule[0].each do |record|
+        ScheduleAllocation.create(
           project_id: @project.id,
-          start_date: record[1][0] - TaskResource.find(record[1][1]).duration,
-          end_date: record[1][0],
-          task_resource_id: record[1][1]
+          start: record[1][0] - PotentialAllocation.find(record[1][1]).duration,
+          end: record[1][0],
+          potential_allocation_id: record[1][1]
         )
       end
     end
@@ -99,7 +145,7 @@ class ProjectsController < ApplicationController
   end
 
   def view_schedule
-    @schedules = ScheduleTask.where(:project_id => params[:id]).order(:start_date)
+    @schedules = ScheduleAllocation.where(:project_id => params[:id]).order(:start)
   end
 
   def delete_schedule
@@ -107,7 +153,7 @@ class ProjectsController < ApplicationController
   end
 
   def destroy_schedule
-    schedules = ScheduleTask.where(:project_id => params[:id])
+    schedules = ScheduleAllocation.where(:project_id => params[:id])
 
     schedules.each do |schedule|
       schedule.destroy
@@ -118,7 +164,7 @@ class ProjectsController < ApplicationController
 
   private
     def redirect_if_not_authorised
-      unless OrganizationUser.exists?(:user_id => current_user.id, :organization_id => Project.find(params[:id]).organization_id)
+      unless OrganizationMember.exists?(:user_id => current_user.id, :organization_id => Project.find(params[:id]).organization_id)
         redirect_to '/home'
       end
     end
@@ -128,7 +174,29 @@ class ProjectsController < ApplicationController
       session[:organization_id] = Project.find(session[:project_id]).organization_id
     end
 
+    def set_show_variables
+      @project = Project.find(params[:id])
+      @capacity_conflicts = helpers.get_capacity_conflicts(@project.id)
+      @cycle_conflicts = helpers.get_cycles(@project.id)
+      @unallocated_conflicts = helpers.get_unallocated_conflicts(@project.id)
+
+      # stores fields and schedules of algorithms being compared
+      @schemes = params[:schemes]
+      @priority_rules = params[:priority_rules]
+      @sampling = params[:sampling]
+      @schedules = params[:schedules]
+
+      @schemes = [] if @schemes.nil?
+      @priority_rules = [] if @priority_rules.nil?
+      @sampling = [] if @sampling.nil?
+      @schedules = [] if @schedules.nil?
+    end
+
     def project_params
       params.require(:project).permit(:name)
+    end
+
+    def project_generation_params
+      params.require(:generate_project).permit(:t_count, :p_chance, :t_count, :t_population_min, :t_population_max, :duration_min, :duration_max, :a_chance)
     end
 end

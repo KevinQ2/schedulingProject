@@ -1,0 +1,10 @@
+<a href="<%= teams_path %>">Back</a>
+
+<h1>Edit Team</h1>
+<%= render "error_team" %>
+
+<%= form_for(@team, method: "patch", class: "form-2") do |f| %>
+  <%= render(:partial=> 'form', :locals => {:f => f}) %>
+  <br>
+  <%= f.submit "Save changes" %>
+<% end %>

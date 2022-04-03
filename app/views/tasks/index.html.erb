@@ -11,7 +11,7 @@
     <tr>
       <th>Title</th>
       <th>Description</th>
-      <th>Instances</th>
+      <th>Population</th>
       <th>Precedences</th>
       <th>Action</th>
     </tr>
@@ -21,7 +21,6 @@
       <tr>
         <td><%= task.title %></td>
         <td><%= task.description %></td>
-        <td><%= task.instances %></td>
         <%
           precedences = TaskPrecedence.where(:task_id => task.id)
           precedence_list = []

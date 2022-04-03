@@ -3,7 +3,7 @@
 <h1>Change details</h1>
 <%= render "error_user" %>
 
-<%= form_for(@user, method: "patch") do |f| %>
+<%= form_for(@user, method: "patch", class: "form-2") do |f| %>
   <%= render(:partial=> 'form', :locals => {:f => f}) %>
   <br>
   <%= f.submit "Update details" %>

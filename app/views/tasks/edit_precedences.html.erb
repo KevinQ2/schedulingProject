@@ -3,7 +3,6 @@
 <h1>Edit precedence</h1>
 Title: <%= @task.title %><br>
 Description: <%= @task.description %><br>
-Instances: <%= @task.instances %><br>
 
 <%= form_with(url: edit_precedences_task_path(params[:id]), method: "patch", local: true) do |f| %>
   <table class="table table-bordered">

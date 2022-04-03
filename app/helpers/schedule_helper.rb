@@ -11,8 +11,8 @@ module ScheduleHelper
 
     resources = {}
 
-    HumanResource.where(:project_id => project.id).each do |human_resource|
-      resources[human_resource.id] = human_resource.instances
+    Team.where(:project_id => project.id).each do |team|
+      resources[team.id] = team.population
     end
 
     return tasks, resources
@@ -31,10 +31,10 @@ module ScheduleHelper
   end
 
   def check_resource_feasible(task, resources)
-    records = TaskResource.where(:task_id => task)
+    records = PotentialAllocation.where(:task_id => task)
 
     records.each do |record|
-      if record.capacity <= resources[record.human_resource_id]
+      if record.capacity <= resources[record.team_id]
         return true
       end
     end
@@ -42,7 +42,7 @@ module ScheduleHelper
     return true
   end
 
-  def update_resources(start_time, end_time, human_resource_id, capacity, f_times, resources)
+  def update_resources(start_time, end_time, team_id, capacity, f_times, resources)
     index = f_times.index(start_time)
     latest = index
 
@@ -55,7 +55,7 @@ module ScheduleHelper
 
       if (current_time >= start_time) && (current_time < end_time)
         latest = index
-        resources[current_time][human_resource_id] = resources[current_time][human_resource_id] - capacity
+        resources[current_time][team_id] = resources[current_time][team_id] - capacity
       else
         break
       end
@@ -66,7 +66,7 @@ module ScheduleHelper
     if f_times.include?(end_time) == false
       f_times.insert(latest + 1, end_time)
       resources[end_time] = resources[f_times[latest]].clone
-      resources[end_time][human_resource_id] = resources[end_time][human_resource_id] + capacity
+      resources[end_time][team_id] = resources[end_time][team_id] + capacity
     end
 
     return f_times, resources
@@ -76,33 +76,95 @@ module ScheduleHelper
     activity_list = nil
 
     if rule == "SPT"
-      activity_list = SPT(tasks)
+      activity_list, task_values = SPT(tasks)
     elsif rule == "LPT"
-      activity_list = LPT(tasks)
+      activity_list, task_values = LPT(tasks)
     elsif rule == "MIS"
-      activity_list = MIS(tasks)
+      activity_list, task_values = MIS(tasks)
     elsif rule == "MTS"
-      activity_list = MTS(tasks)
+      activity_list, task_values = MTS(tasks)
     elsif rule == "LNRJ"
-      activity_list = LNRJ(tasks)
+      activity_list, task_values = LNRJ(tasks)
     elsif rule == "GRPW"
-      activity_list = GRPW(tasks)
+      activity_list, task_values = GRPW(tasks)
     elsif rule == "EST"
-      activity_list = EST(tasks)
+      activity_list, task_values = EST(tasks)
     elsif rule == "EFT"
-      activity_list = EFT(tasks)
+      activity_list, task_values = EFT(tasks)
     elsif rule == "LST"
-      activity_list = LST(tasks)
+      activity_list, task_values = LST(tasks)
     elsif rule == "LFT"
-      activity_list = LFT(tasks)
+      activity_list, task_values = LFT(tasks)
     elsif rule == "MSLK"
-      activity_list = MSLK(tasks)
+      activity_list, task_values = MSLK(tasks)
     elsif rule == "GRWC"
-      activity_list = GRWC(tasks)
+      activity_list, task_values = GRWC(tasks)
     elsif rule == "GCRWC"
-      activity_list = GCRWC(tasks)
+      activity_list, task_values = GCRWC(tasks)
     end
 
-    return fix_activity_list(activity_list, [], {})
+    return fix_activity_list(activity_list, [], {}), task_values
+  end
+
+  def sample_probabilities(decision_set, priority_values, sampling, bias)
+    # defines probabilities for each task in the decision set
+    probabilities = {}
+
+    if sampling == "random"
+      decision_set.each do |task|
+        probabilities[task] = (1.0 / decision_set.count)
+      end
+    elsif sampling == "biased"
+      acc = 0
+      decision_set.each do |task|
+        acc += priority_values[task]
+      end
+
+      decision_set.each do |task|
+        probabilities[task] = priority_values[task].to_f/decision_set.count
+      end
+    elsif sampling == "regret"
+      lowest = nil
+      highest = nil
+
+      decision_set.each do |task|
+        value = priority_values[task].to_f
+
+        if lowest.nil?
+          lowest = value
+        elsif value < lowest
+          lowest = value
+        end
+
+        if highest.nil?
+          highest = value
+        elsif value > highest
+          highest = value
+        end
+      end
+
+      regret = highest - lowest
+      decision_set.each do |task|
+        probabilities[task] = (regret + 1) ** (1 - bias)  # low bias -> deterministic
+      end
+    end
+
+    return probabilities
+  end
+
+  def sample_task(probabilities)
+    # selects a random task according to its probabilities
+    probability = rand()
+
+    probabilities.each do |k, v|
+      value = probabilities[k]
+      if probability <= value
+        return k
+      end
+
+      probability -= value
+    end
+
+    #flash.alert = "end: prob: " + probability.to_s
   end
 end

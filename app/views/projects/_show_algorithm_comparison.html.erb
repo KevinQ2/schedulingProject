@@ -1,0 +1,38 @@
+<!-- display result comparison of schemes and priority rules -->
+<% if @schedules.count > 0 %>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <td rowspan='3'>Priority rule</td>
+
+        <% @schemes.each do |scheme| %>
+          <td colspan='4'><%= scheme %></td>
+        <% end %>
+
+        <td colspan='2'>Completion time</td>
+        <td colspan='2'>Running time</td>
+      </tr>
+      <tr>
+        <% @schemes.each do |scheme| %>
+          <td><%= scheme %></td>
+        <% end %>
+        <% @schemes.each do |scheme| %>
+          <td><%= scheme %></td>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @schedules.each do |rule, scheme_hash| %>
+        <tr>
+          <td><%= schedule[0] %></td>
+          <% @schemes.each do |scheme| %>
+            <td><%= schedule[1][scheme][0] %></td>
+          <% end %>
+          <% @schemes.each do |scheme| %>
+            <td><%= schedule[1][scheme][1] %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

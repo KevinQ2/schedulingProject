@@ -7,18 +7,18 @@
       <th>Start time</th>
       <th>End time</th>
       <th>Task</th>
-      <th>Human resource</th>
+      <th>Team</th>
       <th>Capacity</th>
     </tr>
   </thead>
   <tbody>
     <% @schedules.each do |schedule| %>
       <tr>
-        <td><%= schedule.start_date %></td>
-        <td><%= schedule.end_date %></td>
-        <td><%= schedule.task_resource.task.title %></td>
-        <td><%= schedule.task_resource.human_resource.name %></td>
-        <td><%= schedule.task_resource.capacity %></td>
+        <td><%= schedule.start %></td>
+        <td><%= schedule.end %></td>
+        <td><%= schedule.potential_allocation.task.title %></td>
+        <td><%= schedule.potential_allocation.team.name %></td>
+        <td><%= schedule.potential_allocation.capacity %></td>
       </tr>
     <% end %>
   </tbody>

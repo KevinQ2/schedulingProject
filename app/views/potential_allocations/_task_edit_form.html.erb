@@ -1,0 +1,40 @@
+<p>Task: <%= @current_task.title %></p>
+<p>Description: <%= @current_task.description %></p>
+
+<%
+  precedences = TaskPrecedence.where(:task_id => @current_task.id)
+  precedence_list = []
+  precedences.each do |precedence|
+    precedence_list.push(Task.find(precedence.required_task_id).title)
+  end
+%>
+
+<p>Precedences<%= precedence_list %></td></p>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Team</th>
+      <th>Duration</th>
+      <th>Capacity (number of people required)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @teams.each do |record| %>
+      <% resource = @resources.find_by(:team_id => record.id) %>
+
+      <tr>
+        <td><%= record.name %></td>
+        <%= f.fields_for :values, index: record.id do |r| %>
+          <% if resource.blank? %>
+            <td><%= r.number_field :duration, min: 0 %></td>
+            <td><%= r.number_field :capacity, in: 0..record.population %></td>
+          <% else %>
+            <td><%= r.number_field :duration, min: 0, value: resource.duration %></td>
+            <td><%= r.number_field :capacity, in: 0..record.population, value: resource.capacity %></td>
+          <% end %>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

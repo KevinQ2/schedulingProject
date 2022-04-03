@@ -1,8 +1,9 @@
 <a href="<%= organizations_path %>">Back</a>
 
 <h1>Organization: <%= @organization.name %></h1>
-<a href="<%= organization_users_path %>"><button type="button">View members</button></a>
+<a href="<%= organization_members_path %>"><button type="button">View members</button></a>
 <a href="<%= new_project_path %>"><button type="button">Create new project</button></a>
+<a href="<%= generate_random_project_path %>"><button type="button">Generate random project</button></a>
 
 <br><br>
 <table class="table table-bordered">

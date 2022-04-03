@@ -5,12 +5,16 @@ Rails.application.routes.draw do
   root :to => 'sessions#new'
   get 'login', to: 'sessions#new'
   post 'login', to: 'sessions#create'
-  delete 'log_out', to: 'sessions#destroy'
+  delete 'logout', to: 'sessions#destroy'
 
   patch 'users/:id/change_password', to: 'users#update_password'
 
+  get 'projects/generate_random', to: 'projects#generate_random', as: "generate_random_project"
+  post 'projects/generate_random', to: 'projects#create_random'
   post 'projects/:id', to: 'projects#generate_schedule', as: "generate_schedule"
   delete 'projects/:id/delete_schedule', to: 'projects#destroy_schedule'
+
+  patch 'projects/:id', to: 'projects#compare_algorithms', as: "compare_algorithms"
 
   patch 'tasks/:id/edit_precedences', to: 'tasks#update_precedences'
 
@@ -27,7 +31,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :organization_users, :except => [:show] do
+  resources :organization_members, :except => [:show] do
     member do
       get :delete
     end
@@ -48,13 +52,13 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :human_resources, :except => [:show] do
+  resources :teams, :except => [:show] do
     member do
       get :delete
     end
   end
 
-  resources :task_resources, :except => [:show, :new, :create, :destroy]
+  resources :potential_allocations, :except => [:show, :new, :create, :destroy]
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
