@@ -1,17 +1,49 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  username: bobc
-  password_digest: <%= BCrypt::Password.create('bobpass') %>
+  username: user1
+  password_digest: <%= BCrypt::Password.create('mypassword') %>
   first_name: bob
   last_name: cranks
   email: bob.john@hotmail.com
   telephone: 01234
 
 two:
-  username: johnsons
-  password_digest: <%= BCrypt::Password.create('johnpass') %>
+  username: user2
+  password_digest: <%= BCrypt::Password.create('mypassword') %>
   first_name: johnson
   last_name: smith
   email: johnsonsmith@gmail.com
-  telephone: 01234
+  telephone: 01235
+
+three:
+  username: user3
+  password_digest: <%= BCrypt::Password.create('mypassword') %>
+  first_name: orga
+  last_name: nile
+  email: orga.nile@gmail.com
+  telephone: 01237
+
+four:
+  username: user4
+  password_digest: <%= BCrypt::Password.create('mypassword') %>
+  first_name: rachel
+  last_name: smith
+  email: rachelsmith@gmail.com
+  telephone: 01238
+
+five:
+  username: user5
+  password_digest: <%= BCrypt::Password.create('mypassword') %>
+  first_name: bill
+  last_name: crown
+  email: billcrowsn@gmail.com
+  telephone: 01239
+
+six:
+  username: user6
+  password_digest: <%= BCrypt::Password.create('mypassword') %>
+  first_name: brown
+  last_name: cake
+  email: brown.cake@outlook.co.uk
+  telephone: 01231

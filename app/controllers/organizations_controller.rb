@@ -2,11 +2,12 @@ class OrganizationsController < ApplicationController
   before_action :redirect_if_not_logged_in
   before_action :set_session, except: [:index, :new, :create]
   before_action :redirect_if_not_member, except: [:index, :new, :create]
+  before_action :redirect_if_not_host, except: [:index, :new, :create, :show]
 
   def index
     @organizations = []
 
-    OrganizationMember.where(:user_id => current_user).each do |organization_member|
+    OrganizationMember.where(:user_id => current_user.id).each do |organization_member|
       @organizations.push(Organization.find(organization_member.organization_id))
     end
   end
@@ -19,7 +20,7 @@ class OrganizationsController < ApplicationController
     @organization = Organization.new(organization_params)
 
     if @organization.save
-      OrganizationMember.create(:organization_id => @organization.id, :user_id => current_user.id)
+      OrganizationMember.create(:organization_id => @organization.id, :user_id => current_user.id, :is_host => true)
       redirect_to organizations_path
     else
       render "new"

@@ -4,8 +4,8 @@ class PotentialAllocationTest < ActiveSupport::TestCase
   def setup
     @allocation = PotentialAllocation.new(
       project: projects(:one_one),
-      task: tasks(:one_one_one),
-      team: teams(:one_one_one),
+      task: tasks(:one_one_two),
+      team: teams(:one_one_two),
       duration: 5,
       capacity: 3
     )

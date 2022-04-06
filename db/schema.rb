@@ -18,9 +18,9 @@ ActiveRecord::Schema.define(version: 2022_02_24_103252) do
   create_table "organization_members", force: :cascade do |t|
     t.bigint "organization_id"
     t.bigint "user_id"
-    t.boolean "is_host"
-    t.boolean "can_edit"
-    t.boolean "can_invite"
+    t.boolean "is_host", default: false
+    t.boolean "can_edit", default: false
+    t.boolean "can_invite", default: false
     t.index ["organization_id"], name: "index_organization_members_on_organization_id"
     t.index ["user_id"], name: "index_organization_members_on_user_id"
   end
@@ -54,12 +54,12 @@ ActiveRecord::Schema.define(version: 2022_02_24_103252) do
 
   create_table "schedule_allocations", force: :cascade do |t|
     t.bigint "project_id"
-    t.bigint "potential_allocations_id"
-    t.integer "start"
-    t.integer "end"
+    t.bigint "potential_allocation_id"
+    t.integer "start_date"
+    t.integer "end_date"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["potential_allocations_id"], name: "index_schedule_allocations_on_potential_allocations_id"
+    t.index ["potential_allocation_id"], name: "index_schedule_allocations_on_potential_allocation_id"
     t.index ["project_id"], name: "index_schedule_allocations_on_project_id"
   end
 

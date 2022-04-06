@@ -2,8 +2,11 @@ class TasksController < ApplicationController
   before_action :redirect_if_not_logged_in
   before_action :set_session, except: [:index, :new, :create]
   before_action :redirect_if_not_member
+  before_action :redirect_if_not_edit, except: [:index]
 
   def index
+    @can_edit = helpers.is_edit_member?(session[:organization_id])
+
     @tasks = Task.where(:project_id => session[:project_id])
     @cycle_conflicts = helpers.get_cycles(session[:project_id])
   end
@@ -17,6 +20,7 @@ class TasksController < ApplicationController
     @task.project_id = session[:project_id]
 
     if @task.save
+      helpers.clear_schedule(@task.project_id)
       redirect_to tasks_path
     else
       render "new"
@@ -32,6 +36,7 @@ class TasksController < ApplicationController
     @task.attributes = task_params
 
     if @task.save
+      helpers.clear_schedule(@task.project_id)
       redirect_to tasks_path
     else
       render "edit"
@@ -57,6 +62,8 @@ class TasksController < ApplicationController
     @precedences = TaskPrecedence.where(:task_id => params[:id])
 
     @cycle_conflicts = helpers.get_cycles(session[:project_id])
+
+    helpers.clear_schedule(@task.project_id)
 
     @precedences.each do |precedence|
       if !precedence.destroy
@@ -99,6 +106,7 @@ class TasksController < ApplicationController
     project_id = @task.project_id
 
     @task.destroy
+    helpers.clear_schedule(@task.project_id)
     redirect_to tasks_path
   end
 

@@ -22,9 +22,12 @@
     <%= f.text_field :username %>
   <% end %>
 
-  <%= f.label :can_edit, "Edit permissions:" %>
-  <%= f.select :can_edit, options_for_select([true, false], :selected => false) %>
-
+  <% if is_host_member?(session[:organization_id]) %>
+    <%= f.label :can_edit, "Can edit projects:" %>
+    <%= f.select :can_edit, options_for_select([true, false], :selected => false) %>
+    <%= f.label :can_invite, "Can invite other users:" %>
+    <%= f.select :can_invite, options_for_select([true, false], :selected => false) %>
+  <% end %>
   <br>
   <%= f.submit "Add member" %>
 <% end %>

@@ -1,7 +1,9 @@
 class OrganizationMembersController < ApplicationController
   before_action :redirect_if_not_logged_in
-  before_action :set_session, except: [:index, :new, :update_new, :create]
+  before_action :set_session, except: [:index, :new, :create]
   before_action :redirect_if_not_member
+  before_action :redirect_if_not_host, only: [:edit, :update, :delete, :destroy]
+  before_action :redirect_if_not_invite, only: [:new, :create]
 
   def index
     @organization_member = OrganizationMember.where(:organization_id => session[:organization_id])
@@ -17,24 +19,29 @@ class OrganizationMembersController < ApplicationController
   end
 
   def create
-    @organization_member = OrganizationMember.new(:organization_id => session[:organization_id], :can_edit => params[:can_edit])
+    @organization_member = OrganizationMember.new(organization_id: session[:organization_id])
 
-    @user = nil
+    if helpers.is_host_member?(session[:organization_id])
+      @organization_member.can_edit = params[:can_edit]
+      @organization_member.can_invite = params[:can_invite]
+    end
+
+    user = nil
     type = params[:type]
 
     if type == "Telephone"
-      @user = User.find_by(:telephone => params[:telephone])
+      user = User.find_by(:telephone => params[:telephone])
     elsif type == "Email"
-      @user = User.find_by(:email => params[:email])
+      user = User.find_by(:email => params[:email])
     else
-      @user = User.find_by(:username => params[:username])
+      user = User.find_by(:username => params[:username])
     end
 
-    if @user == nil
+    if user == nil
       flash.alert = "Person with this " + type.downcase + " is not registered in the system"
       render "new"
     else
-      @organization_member.user_id = @user.id
+      @organization_member.user_id = user.id
 
       if @organization_member.save
         redirect_to organization_members_path
@@ -78,6 +85,6 @@ class OrganizationMembersController < ApplicationController
     end
 
     def organization_member_params
-      params.require(:organization_member).permit(:can_edit)
+      params.require(:organization_member).permit(:can_edit, :can_invite)
     end
 end

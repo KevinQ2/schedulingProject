@@ -2,8 +2,11 @@ class TeamsController < ApplicationController
   before_action :redirect_if_not_logged_in
   before_action :set_session, except: [:index, :new, :create]
   before_action :redirect_if_not_member
+  before_action :redirect_if_not_edit, except: [:index]
 
   def index
+    @can_edit = helpers.is_edit_member?(session[:organization_id])
+
     @teams = Team.where(:project => session[:project_id])
   end
 
@@ -16,6 +19,7 @@ class TeamsController < ApplicationController
     @team.project_id = session[:project_id]
 
     if @team.save
+      helpers.clear_schedule(@team.project_id)
       redirect_to teams_path
     else
       render "new"
@@ -31,6 +35,7 @@ class TeamsController < ApplicationController
     @team.attributes = team_params
 
     if @team.save
+      helpers.clear_schedule(@team.project_id)
       redirect_to teams_path
     else
       render "edit"
@@ -46,6 +51,7 @@ class TeamsController < ApplicationController
     project_id = team.project_id
 
     team.destroy
+    helpers.clear_schedule(@team.project_id)
     redirect_to teams_path
   end
 

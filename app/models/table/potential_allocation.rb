@@ -18,7 +18,7 @@ class PotentialAllocation < ApplicationRecord
   end
 
   def capacity_limit
-    if !self.team.nil? and !self.capacity.nil?
+    if !self.capacity.nil? and !self.team.nil?
       if self.capacity > self.team.population
         errors.add(:task, "capacity can't exceed team's population")
       end

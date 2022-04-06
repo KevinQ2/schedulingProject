@@ -14,8 +14,8 @@
   <tbody>
     <% @schedules.each do |schedule| %>
       <tr>
-        <td><%= schedule.start %></td>
-        <td><%= schedule.end %></td>
+        <td><%= schedule.start_date %></td>
+        <td><%= schedule.end_date %></td>
         <td><%= schedule.potential_allocation.task.title %></td>
         <td><%= schedule.potential_allocation.team.name %></td>
         <td><%= schedule.potential_allocation.capacity %></td>

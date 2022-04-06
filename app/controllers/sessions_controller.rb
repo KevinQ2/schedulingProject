@@ -10,6 +10,7 @@ class SessionsController < ApplicationController
       session[:username] = @user.username
       redirect_to '/home'
     else
+      flash.alert = "Login details are incorrect"
       redirect_to '/login'
     end
   end

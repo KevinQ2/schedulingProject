@@ -3,7 +3,9 @@
 <h1>Tasks</h1>
 <%= render "error_cycles" %>
 
-<a href="<%= new_task_path %>"><button type="button">Create new task</button></a>
+<% if @can_edit %>
+  <a href="<%= new_task_path %>"><button type="button">Create new task</button></a>
+<% end %>
 
 <br>
 <table class="table table-bordered">
@@ -30,11 +32,13 @@
         %>
         <td><%= precedence_list %></td>
 
-        <td>
-          <a href="<%= edit_task_path(task) %>"><button type="button">Edit</button></a>
-          <a href="<%= edit_precedences_task_path(task) %>"><button type="button">Edit precedences</button></a>
-          <a href="<%= delete_task_path(task) %>"><button type="button">Delete</button></a>
-        </td>
+        <% if @can_edit %>
+          <td>
+            <a href="<%= edit_task_path(task) %>"><button type="button">Edit</button></a>
+            <a href="<%= edit_precedences_task_path(task) %>"><button type="button">Edit precedences</button></a>
+            <a href="<%= delete_task_path(task) %>"><button type="button">Delete</button></a>
+          </td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>

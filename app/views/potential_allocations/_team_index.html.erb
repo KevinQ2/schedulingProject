@@ -28,9 +28,12 @@
           <td><%= Task.find(resource.task_id).title %></td>
           <td><%= resource.duration %></td>
           <td><%= resource.capacity %></td>
-          <td rowspan='<%= records.count %>'>
-            <a href="<%= edit_potential_allocation_path(team) %>"><button type="button">Edit</button></a>
-          </td>
+          
+          <% if @can_edit %>
+            <td rowspan='<%= records.count %>'>
+                <a href="<%= edit_potential_allocation_path(team) %>"><button type="button">Edit</button></a>
+            </td>
+          <% end %>
         </tr>
         <% tail.each do |resource| %>
           <tr>

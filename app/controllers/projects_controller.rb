@@ -1,7 +1,8 @@
 class ProjectsController < ApplicationController
   before_action :redirect_if_not_logged_in
-  before_action :set_session, except: [:index, :new, :create, :generate_random, :create_random]
+  before_action :set_session, except: [:new, :create, :generate_random, :create_random]
   before_action :redirect_if_not_member
+  before_action :redirect_if_not_edit, except: [:show, :compare_algorithms]
 
   def show
     set_show_variables
@@ -134,32 +135,14 @@ class ProjectsController < ApplicationController
       schedule[0].each do |record|
         ScheduleAllocation.create(
           project_id: @project.id,
-          start: record[1][0] - PotentialAllocation.find(record[1][1]).duration,
-          end: record[1][0],
+          start_date: record[1][0] - PotentialAllocation.find(record[1][1]).duration,
+          end_date: record[1][0],
           potential_allocation_id: record[1][1]
         )
       end
     end
 
     render "show"
-  end
-
-  def view_schedule
-    @schedules = ScheduleAllocation.where(:project_id => params[:id]).order(:start)
-  end
-
-  def delete_schedule
-    @project = Project.find(params[:id])
-  end
-
-  def destroy_schedule
-    schedules = ScheduleAllocation.where(:project_id => params[:id])
-
-    schedules.each do |schedule|
-      schedule.destroy
-    end
-
-    redirect_to project_path(session[:project_id])
   end
 
   private
@@ -175,6 +158,8 @@ class ProjectsController < ApplicationController
     end
 
     def set_show_variables
+      @can_edit = helpers.is_edit_member?(session[:organization_id])
+      
       @project = Project.find(params[:id])
       @capacity_conflicts = helpers.get_capacity_conflicts(@project.id)
       @cycle_conflicts = helpers.get_cycles(@project.id)

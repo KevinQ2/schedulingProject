@@ -1,8 +1,9 @@
 <a href="<%= project_path(session[:project_id]) %>">Back</a>
 
 <h1>Teams</h1>
-<a href="<%= new_team_path %>"><button type="button">Create new team</button></a>
-
+<% if @can_edit %>
+  <a href="<%= new_team_path %>"><button type="button">Create new team</button></a>
+<% end %>
 <br>
 <table class="table table-bordered">
   <thead>
@@ -17,10 +18,12 @@
     <tr>
       <td><%= team.name %></td>
       <td><%= team.population %></td>
-      <td>
-        <a href="<%= edit_team_path(team) %>"><button type="button">Edit</button></a>
-        <a href="<%= delete_team_path(team) %>"><button type="button">Delete</button></a>
-      </td>
+      <% if @can_edit %>
+        <td>
+          <a href="<%= edit_team_path(team) %>"><button type="button">Edit</button></a>
+          <a href="<%= delete_team_path(team) %>"><button type="button">Delete</button></a>
+        </td>
+      <% end %>
     </tr><br>
   <% end %>
 </table>

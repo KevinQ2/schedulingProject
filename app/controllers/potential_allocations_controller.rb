@@ -3,8 +3,11 @@ class PotentialAllocationsController < ApplicationController
   before_action :set_session, except: [:index, :update_index, :edit, :update]
   before_action :set_session_b, only: [:edit, :update]
   before_action :redirect_if_not_member
+  before_action :redirect_if_not_edit, except: [:index]
 
   def index
+    @can_edit = helpers.is_edit_member?(session[:organization_id])
+
     @tasks = Task.where(:project_id => session[:project_id])
     @teams = Team.where(:project_id => session[:project_id])
     @potential_allocations = PotentialAllocation.where(:project_id => session[:project_id])
@@ -25,6 +28,7 @@ class PotentialAllocationsController < ApplicationController
 
   def update
     failed_updates = []
+    helpers.clear_schedule(session[:project_id])
 
     if session[:potential_allocation_type] == "Team"
       Task.where(:project_id => session[:project_id]).each do |task|

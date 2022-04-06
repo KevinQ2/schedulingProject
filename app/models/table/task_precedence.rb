@@ -7,7 +7,7 @@ class TaskPrecedence < ApplicationRecord
   validates_uniqueness_of :required_task_id, :scope => :task_id
 
   def same_task
-    if !self.task_id.nil? and !self.required_task_id.nil?
+    if !self.task_id.blank? and !self.required_task_id.blank?
       if self.task_id == self.required_task_id
         errors.add(:task_id, "tasks can't be identical")
       end
