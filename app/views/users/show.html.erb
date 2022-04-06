@@ -11,4 +11,4 @@ Telephone: <%= @user.telephone %><br>
 <a href="<%= edit_user_path(@user.id) %>"><button type="button">Change details</button></a>
 <a href="<%= change_password_user_path(@user.id) %>"><button type="button">Change password</button></a>
 
-<%= button_to 'Log out', log_out_path, method: :delete %>
+<%= button_to 'Log out', logout_path, method: :delete %>

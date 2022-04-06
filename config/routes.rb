@@ -9,6 +9,9 @@ Rails.application.routes.draw do
 
   patch 'users/:id/change_password', to: 'users#update_password'
 
+  patch 'organizations/reply/:id', to: 'organizations#member_reply', as: "member_reply"
+  patch 'organization_members/leave/:id', to: 'organization_members#leave', as: "member_leave"
+
   get 'projects/generate_random', to: 'projects#generate_random', as: "generate_random_project"
   post 'projects/generate_random', to: 'projects#create_random'
   post 'projects/:id', to: 'projects#generate_schedule', as: "generate_schedule"

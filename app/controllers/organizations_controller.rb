@@ -1,8 +1,8 @@
 class OrganizationsController < ApplicationController
   before_action :redirect_if_not_logged_in
-  before_action :set_session, except: [:index, :new, :create]
-  before_action :redirect_if_not_member, except: [:index, :new, :create]
-  before_action :redirect_if_not_host, except: [:index, :new, :create, :show]
+  before_action :set_session, except: [:index, :new, :create, :member_reply]
+  before_action :redirect_if_not_member, except: [:index, :new, :create, :member_reply]
+  before_action :redirect_if_not_host, except: [:index, :new, :create, :show, :member_reply]
 
   def index
     @organizations = []
@@ -20,7 +20,12 @@ class OrganizationsController < ApplicationController
     @organization = Organization.new(organization_params)
 
     if @organization.save
-      OrganizationMember.create(:organization_id => @organization.id, :user_id => current_user.id, :is_host => true)
+      OrganizationMember.create(
+        organization_id: @organization.id,
+        user_id: current_user.id,
+        is_host: true,
+        pending: false
+      )
       redirect_to organizations_path
     else
       render "new"
@@ -55,6 +60,23 @@ class OrganizationsController < ApplicationController
   def destroy
     organization = Organization.find(params[:id])
     organization.destroy
+    redirect_to organizations_path
+  end
+
+  def member_reply
+    organization = Organization.find(params[:id])
+    organization_member = OrganizationMember.find_by(
+      organization_id: organization.id,
+      user_id: current_user.id
+    )
+
+    if params[:submit] == "accept"
+      organization_member.pending = false
+      organization_member.save
+    else
+      organization_member.destroy
+    end
+
     redirect_to organizations_path
   end
 

@@ -6,6 +6,7 @@ class CreateOrganizationMembers < ActiveRecord::Migration[6.0]
       t.boolean :is_host, default: false
       t.boolean :can_edit, default: false
       t.boolean :can_invite, default: false
+      t.boolean :pending, default: true
     end
   end
 end

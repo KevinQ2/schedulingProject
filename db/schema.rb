@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 2022_02_24_103252) do
     t.boolean "is_host", default: false
     t.boolean "can_edit", default: false
     t.boolean "can_invite", default: false
+    t.boolean "pending", default: true
     t.index ["organization_id"], name: "index_organization_members_on_organization_id"
     t.index ["user_id"], name: "index_organization_members_on_user_id"
   end

@@ -2,7 +2,7 @@
 
 <h1>Members</h1>
 <% if is_invite_member?(session[:organization_id]) %>
-  <a href="<%= new_organization_member_path %>"><button type="button">Add member</button></a>
+  <a href="<%= new_organization_member_path %>"><button type="button">Invite user</button></a>
 <% end %>
 
 <br>
@@ -14,25 +14,42 @@
       <th>Last name</th>
       <th>Email</th>
       <th>Telephone</th>
-      <th>Can edit?</th>
+      <th>Can edit</th>
+      <th>Can invite</th>
       <th>Action</th>
     </tr>
   </thead>
   <tbody>
-    <% can_invite = is_host_member?(session[:organization_id]) %>
+    <% is_host = is_host_member?(session[:organization_id]) %>
+
     <% @organization_member.each do |organization_member| %>
       <tr>
         <% user = User.find(organization_member.user_id) %>
         <td><%= user.username %></td>
-        <td><%= user.first_name %></td>
-        <td><%= user.last_name %></td>
-        <td><%= user.email %></td>
-        <td><%= user.telephone %></td>
+
+        <% if !organization_member.pending %>
+          <td><%= user.first_name %></td>
+          <td><%= user.last_name %></td>
+          <td><%= user.email %></td>
+          <td><%= user.telephone %></td>
+        <% else %>
+          <td colspan="4">Hidden until user accepts invitation</td>
+        <% end %>
+
         <td><%= organization_member.can_edit %></td>
+        <td><%= organization_member.can_invite %></td>
         <td>
-          <% if can_invite %>
-            <a href="<%= edit_organization_member_path(organization_member) %>"><button type="button">Edit permissions</button></a>
-            <a href="<%= delete_organization_member_path(organization_member) %>"><button type="button">Remove</button></a>
+          <% if is_host %>
+            <% if user.id != current_user.id %>
+              <a href="<%= edit_organization_member_path(organization_member) %>"><button type="button">Edit permissions</button></a>
+              <a href="<%= delete_organization_member_path(organization_member) %>"><button type="button">Remove</button></a>
+            <% end %>
+          <% else %>
+            <% if user.id == current_user.id %>
+              <%= form_with(url: member_leave_path(organization_member), method: 'patch', local: true) do |f| %>
+                <%= f.submit "Leave" %>
+              <% end %>
+            <% end %>
           <% end %>
         </td>
       </tr>

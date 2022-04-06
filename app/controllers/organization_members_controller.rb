@@ -19,7 +19,7 @@ class OrganizationMembersController < ApplicationController
   end
 
   def create
-    @organization_member = OrganizationMember.new(organization_id: session[:organization_id])
+    @organization_member = OrganizationMember.new(organization_id: session[:organization_id], pending: true)
 
     if helpers.is_host_member?(session[:organization_id])
       @organization_member.can_edit = params[:can_edit]
@@ -77,6 +77,14 @@ class OrganizationMembersController < ApplicationController
     else
       render "delete"
     end
+  end
+
+  def leave
+    organization_member = OrganizationMember.find(params[:id])
+    organization_member.destroy
+
+    flash.alert = "You have left the organization"
+    redirect_to organizations_path
   end
 
   private

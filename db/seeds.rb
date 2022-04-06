@@ -33,17 +33,18 @@ master_organizations.each do |temp|
   )
 end
 
-master_organization_member = [
-  [1, 1, true, true, true]
+master_organization_members = [
+  [1, 1, true, true, true, false]
 ]
 
-master_organization_member.each do |temp|
+master_organization_members.each do |temp|
   organization_member = OrganizationMember.create(
     organization_id: temp[0],
     user_id: temp[1],
     is_host: temp[2],
     can_edit: temp[3],
-    can_invite: temp[4]
+    can_invite: temp[4],
+    pending: temp[5]
   )
 end
 
