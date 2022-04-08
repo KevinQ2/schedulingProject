@@ -11,6 +11,10 @@ To build the application locally:
 6.	run “rails db:create”
 7.	run “rails db:migrate”
 8.	optionally, you can run “rails db:seed” to populate the database with test data
+9.  run "rails s" should start up the server
+10. when the terminal confirms the server is up, on a browser, go to "localhost:3000" 
+11. if you are in the login page, you are using the application
+
 
 The application is developed using Ruby on Rails with a PostgreSQL. Download links are listed below:
 - PostgreSQL: https://www.postgresql.org/download/ 
