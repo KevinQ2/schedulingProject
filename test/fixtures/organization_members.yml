@@ -1,0 +1,50 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# organization_user
+one_one:
+  organization: one
+  user: one
+  is_host: true
+  can_edit: false
+  can_invite: false
+  pending: false
+
+one_two:
+  organization: one
+  user: two
+  is_host: false
+  can_edit: true
+  can_invite: false
+  pending: false
+
+one_three:
+  organization: one
+  user: three
+  is_host: false
+  can_edit: false
+  can_invite: true
+  pending: false
+
+one_four:
+  organization: one
+  user: four
+  is_host: false
+  can_edit: false
+  can_invite: false
+  pending: false
+
+one_five:
+  organization: one
+  user: four
+  is_host: false
+  can_edit: false
+  can_invite: false
+  pending: true
+
+two_two:
+  organization: two
+  user: two
+  is_host: true
+  can_edit: true
+  can_invite: true
+  pending: false

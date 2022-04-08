@@ -1,0 +1,48 @@
+<%= form_with(url: compare_algorithms_path, method: 'patch', local: true) do |f| %>
+  <!-- display scheme and priority rule checkboxes -->
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <td>Schedule generation schemes</td>
+        <td>Priority rules</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="align-top">
+          <%= f.collection_check_boxes :schemes, {
+            "Serial": "Serial",
+            "Parallel": "Parallel"
+          }, :last, :first do |p| %>
+            <%= p.check_box checked: @schemes.include?(p.object.last) %>
+            <%= p.object.first %><br>
+          <% end %>
+        </td>
+        <td class="align-top">
+          <%= f.collection_check_boxes :priority_rules, {
+            "SPT - Shortest Processing Time": "SPT",
+            "LPT - Longest Processing Time": "LPT",
+            "MIS - Most Immediate Successors": "MIS",
+            "MTS - Most Total Successors": "MTS",
+            "LNRJ - Least Non-Related Jobs": "LNRJ",
+            "GRPW - Greatest Rank Positional Weight": "GRPW",
+            "EST - Earliest Start Time": "EST",
+            "EFT - Earliest Finish Time": "EFT",
+            "LST - Latest Start Time": "LST",
+            "LFT - Latest Finish Time": "LFT",
+            "MSLK - Minimum Slack": "MSLK",
+            "GRWC - Greatest Resource Work Content": "GRWC",
+            "GCRWC - Greatest Cumulative Resource Work Content": "GCRWC"
+          }, :last, :first do |p| %>
+            <%= p.check_box checked: @priority_rules.include?(p.object.last) %>
+            <%= p.object.first %><br>
+          <% end %>
+        </td>
+        <td>
+          <%= f.submit "Compare algorithms" %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+<% end %>

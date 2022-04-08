@@ -1,0 +1,25 @@
+<a href="<%= project_path(session[:project_id]) %>">Back</a>
+
+<h1>Project schedule</h1>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Start time</th>
+      <th>End time</th>
+      <th>Task</th>
+      <th>Team</th>
+      <th>Capacity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @schedules.each do |schedule| %>
+      <tr>
+        <td><%= schedule.start_date %></td>
+        <td><%= schedule.end_date %></td>
+        <td><%= schedule.potential_allocation.task.title %></td>
+        <td><%= schedule.potential_allocation.team.name %></td>
+        <td><%= schedule.potential_allocation.capacity %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

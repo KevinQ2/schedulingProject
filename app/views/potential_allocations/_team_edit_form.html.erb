@@ -1,0 +1,31 @@
+<p>Team: <%= @current_team.name %></p>
+<p>Population: <%= @current_team.population %></p>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Duration</th>
+      <th>Capacity (number of people required)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tasks.each do |record| %>
+      <% resource = @resources.find_by(:task_id => record.id) %>
+
+      <tr>
+        <td><%= record.title %></td>
+
+        <%= f.fields_for :values, index: record.id do |r| %>
+          <% if resource.blank? %>
+            <td><%= r.number_field :duration, min: 0 %></td>
+            <td><%= r.number_field :capacity, in: 0..@current_team.population %></td>
+          <% else %>
+            <td><%= r.number_field :duration, min: 0, value: resource.duration %></td>
+            <td><%= r.number_field :capacity, in: 0..@current_team.population, value: resource.capacity %></td>
+          <% end %>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

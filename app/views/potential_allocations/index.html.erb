@@ -1,0 +1,18 @@
+<a href="<%= project_path(session[:project_id]) %>">Back</a>
+
+<h1>Task/Team allocations</h1>
+<%= render "error_capacity" %>
+<%= render "error_unallocated" %>
+
+
+<%= form_with(url: potential_allocations_path, method: "get", remote: true) do |f| %>
+  <%= f.label :type, "Display by: " %>
+  <%= f.select :type, options_for_select(["Team", "Task"], :selected => session[:potential_allocation_type]), {},
+    :onchange => "this.form.submit();" %>
+<% end %>
+
+<% if session[:potential_allocation_type] == "Team" %>
+  <%= render(:partial=> 'team_index', :locals => {:teams => @teams}) %>
+<% else %>
+  <%= render(:partial=> 'task_index', :locals => {:tasks => @tasks}) %>
+<% end %>

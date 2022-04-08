@@ -1,0 +1,14 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# organizzation_project
+one_one:
+  organization: one
+  name: scheduling
+
+one_two:
+  organization: one
+  name: tester
+
+two_one:
+  organization: two
+  name: sports

@@ -1,0 +1,16 @@
+<a href="<%= organization_members_path %>">Back</a>
+
+<h1>Edit member: <%= @organization_member.user.username %></h1>
+<%= render "error_organization_member" %>
+
+<div class="form-2">
+  <%= form_for(@organization_member, method: "patch") do |f| %>
+    <%= f.label :can_edit, "Can edit projects" %>
+    <%= f.check_box :can_edit %>
+
+    <%= f.label :can_invite, "Can invite other users:" %>
+    <%= f.check_box :can_invite %>
+    <br>
+    <%= f.submit "Save changes" %>
+  <% end %>
+</div>

@@ -12,4 +12,27 @@
  *
  *= require_tree .
  *= require_self
+ *= stub 'projects'
  */
+
+/* retains form spacing after submitting */
+div.field_with_errors {
+ display: inline;
+}
+
+.form-2, .form-2 form{
+  display: grid;
+  max-width: 800px;
+  grid-template-columns: auto 1fr;
+}
+
+.form-2 label {
+  padding-right: 50px;
+  margin-bottom: 20px;
+}
+
+.form-2 input {
+  min-width: 100px;
+  max-width: 300px;
+  margin-bottom: 20px;
+}

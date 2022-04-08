@@ -1,0 +1,7 @@
+<a href="<%= "/home" %>">Back</a>
+
+<h1>Delete Account</h1>
+<p>Are you sure you want to delete this?</p>
+<%= form_for(@user, method: "delete") do |f| %>
+  <%= f.submit "Delete" %>
+<% end %>

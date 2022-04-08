@@ -1,0 +1,16 @@
+<a href="<%= potential_allocations_path %>">Back</a>
+
+<h1>Edit Allocations</h1>
+<%= render "error_capacity" %>
+<%= render "error_unallocated" %>
+
+<%= form_with(url: potential_allocation_path(params[:id]), method: :patch, local: true) do |f| %>
+  <%= f.submit "Save changes" %>
+  <br>
+
+  <% if session[:potential_allocation_type] == "Team" %>
+    <%= render(:partial=> 'team_edit_form', :locals => {:f => f}) %>
+  <% else %>
+    <%= render(:partial=> 'task_edit_form', :locals => {:f => f}) %>
+  <% end %>
+<% end %>

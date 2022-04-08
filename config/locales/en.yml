@@ -31,3 +31,15 @@
 
 en:
   hello: "Hello world"
+
+  activemodel:
+    attributes:
+      generate_project:
+        t_count: "Number of tasks"
+        p_chance: "Precedence chance"
+        t_count: "Number of teams"
+        t_population_min: "Minimum team "
+        t_population_max: "Maximum team "
+        duration_min: "Minimum duration"
+        duration_max: "Maximum duration"
+        a_chance: "Allocation chance"

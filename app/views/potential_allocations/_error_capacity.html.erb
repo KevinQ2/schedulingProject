@@ -1,0 +1,9 @@
+<% conflicts = get_capacity_conflicts(session[:project_id]) %>
+<% if conflicts.count > 0 %>
+  <p>The project contains capacity conflicts:</p>
+  <ul>
+      <% conflicts.each do |capacity| %>
+          <li><%= capacity %></li>
+      <% end %>
+  </ul>
+<% end %>

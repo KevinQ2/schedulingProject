@@ -1,0 +1,7 @@
+<a href="<%= organization_members_path %>">Back</a>
+
+<h1>Remove member: <%= @organization_member.user.username %></h1>
+<p>Are you sure you want to remove this user?</p>
+<%= form_for(@organization_member, method: "delete") do |f| %>
+  <%= f.submit "Delete" %>
+<% end %>

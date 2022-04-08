@@ -1,0 +1,12 @@
+<a href="<%= tasks_path %>">Back</a>
+
+<h1>Edit Task</h1>
+<%= render "error_task" %>
+
+<div class="form-2">
+  <%= form_for(@task, method: "patch") do |f| %>
+    <%= render(:partial=> 'form', :locals => {:f => f}) %>
+    <br>
+    <%= f.submit "Save changes" %>
+  <% end %>
+</div>

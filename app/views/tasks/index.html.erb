@@ -1,0 +1,44 @@
+<a href="<%= project_path(session[:project_id]) %>">Back</a>
+
+<h1>Tasks</h1>
+<%= render "error_cycles" %>
+
+<% if @can_edit %>
+  <a href="<%= new_task_path %>"><button type="button">Create new task</button></a>
+<% end %>
+
+<br>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Precedences</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tasks.each do |task| %>
+      <tr>
+        <td><%= task.title %></td>
+        <td><%= task.description %></td>
+        <%
+          precedences = TaskPrecedence.where(:task_id => task.id)
+          precedence_list = []
+          precedences.each do |precedence|
+            precedence_list.push(Task.find(precedence.required_task_id).title)
+          end
+        %>
+        <td><%= precedence_list %></td>
+
+        <% if @can_edit %>
+          <td>
+            <a href="<%= edit_task_path(task) %>"><button type="button">Edit</button></a>
+            <a href="<%= edit_precedences_task_path(task) %>"><button type="button">Edit precedences</button></a>
+            <a href="<%= delete_task_path(task) %>"><button type="button">Delete</button></a>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

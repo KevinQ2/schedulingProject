@@ -1,0 +1,7 @@
+<a href="<%= project_path(session[:project_id]) %>">Back</a>
+
+<h1>Delete Schedule</h1>
+<p>Are you sure you want to delete this?</p>
+<%= form_with(url: schedule_path(session[:project_id]), method: 'delete', local: true) do |f| %>
+  <%= f.submit "Delete" %>
+<% end %>

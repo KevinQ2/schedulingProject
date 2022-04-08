@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# organization_project_team
+one_one_one:
+  project: one_one
+  name: programming
+  population: 5
+
+one_one_two:
+  project: one_one
+  name: designing
+  population: 3
+
+one_two_one:
+  project: one_two
+  name: designing
+  population: 3

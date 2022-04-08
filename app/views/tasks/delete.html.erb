@@ -1,0 +1,7 @@
+<a href="<%= tasks_path %>">Back</a>
+
+<h1>Delete Task: <%= @task.title %></h1>
+<p>Are you sure you want to delete this?</p>
+<%= form_for(@task, method: "delete") do |f| %>
+  <%= f.submit "Delete" %>
+<% end %>

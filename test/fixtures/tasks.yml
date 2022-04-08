@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# organziation_project_team
+one_one_one:
+  project: one_one
+  title: Base
+  description: Initialise base application
+
+one_one_two:
+  project: one_one
+  title: Scheduling algorithm
+  description: my description
+
+one_two_one:
+  project: one_two
+  title: Scheduling algorithm
+  description: my description
