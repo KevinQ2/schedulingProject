@@ -1,6 +1,8 @@
 module GeneticAlgorithmHelper
   include SerialScheduleHelper
 
+  # algorithm inspired by chitrankmishra's Genetic Algorithm implementation for the Travelling Salesman Problem
+  # https://www.geeksforgeeks.org/traveling-salesman-problem-using-genetic-algorithm/
   @project = nil
   @vertices = 0
   @genes = []
