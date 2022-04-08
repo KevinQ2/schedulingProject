@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  before_action :redirect_if_logged_in
+
   def new
     @user = User.new()
   end
@@ -25,5 +27,11 @@ class SessionsController < ApplicationController
   private
     def login_params
       params.require(:user).permit(:username, :password)
+    end
+
+    def redirect_if_logged_in
+      if logged_in?
+        redirect_to "/home"
+      end
     end
 end
