@@ -14,8 +14,6 @@ Rails.application.routes.draw do
 
   get 'projects/generate_random', to: 'projects#generate_random', as: "generate_random_project"
   post 'projects/generate_random', to: 'projects#create_random'
-  post 'projects/:id', to: 'projects#generate_schedule', as: "generate_schedule"
-  delete 'projects/:id/delete_schedule', to: 'projects#destroy_schedule'
 
   patch 'projects/:id', to: 'projects#compare_algorithms', as: "compare_algorithms"
 
@@ -43,8 +41,6 @@ Rails.application.routes.draw do
   resources :projects, :except => [:index] do
     member do
       get :delete
-      get :view_schedule
-      get :delete_schedule
     end
   end
 
@@ -63,7 +59,11 @@ Rails.application.routes.draw do
 
   resources :potential_allocations, :except => [:show, :new, :create, :destroy]
 
-  resources :schedules, :except => [:index, :new, :create, :edit, :update, :destroy]
+  resources :schedules, :except => [:index, :new, :edit, :update] do
+    member do
+      get :delete
+    end
+  end
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

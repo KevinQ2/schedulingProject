@@ -7,36 +7,38 @@
   <%= f.fields_for @project do |project_form| %>
     <%= render(:partial=> 'form', :locals => {:f => project_form}) %>
   <% end %>
+  <br><br>
+  <div class="form-2">
+    <%= f.fields_for @generate_project do |generate_form| %>
+      <h3>Tasks</h3><br>
+      <%= generate_form.label :initial_task, "Number of initial tasks::" %>
+      <%= generate_form.number_field :initial_task, min: 1 %>
+      <%= generate_form.label :task_count, "Number of tasks:" %>
+      <%= generate_form.number_field :task_count, min: 1 %>
+      <%= generate_form.label :max_prec, "Maximum number of precedence per task" %>
+      <%= generate_form.number_field :max_prec, min: 0 %>
 
-  <%= f.fields_for @generate_project do |generate_form| %>
-    <h3>Tasks</h3>
-    <%= generate_form.label :t_count, "Number of tasks:" %>
-    <%= generate_form.number_field :t_count, min: 1 %><br>
-    <%= generate_form.label :p_chance, "Chance of precedence(%):" %>
-    <%= generate_form.number_field :p_chance, min: 0, max: 100 %><br>
+      <h3>Teams</h3><br>
+      <%= generate_form.label :t_count, "Number of teams:" %>
+      <%= generate_form.number_field :t_count, min: 1 %>
+      <p>Population range:</p><br>
+      <%= generate_form.label :t_population_min,  "Min:" %>
+      <%= generate_form.number_field :t_population_min, min: 1 %>
+      <%= generate_form.label :t_population_max,  "Max:" %>
+      <%= generate_form.number_field :t_population_max, min: 1 %>
+
+      <h3>Allocations</h3><br>
+      <p>Duration range:</p><br>
+      <%= generate_form.label :duration_min,  "Min:" %>
+      <%= generate_form.number_field :duration_min, min: 1 %>
+      <%= generate_form.label :duration_max,  "Max:" %>
+      <%= generate_form.number_field :duration_max, min: 1 %>
+
+      <%= generate_form.label :a_chance, "Team allocation chance(%)(min 1 is allocated):" %>
+      <%= generate_form.number_field :a_chance, min: 0, max: 100 %><br>
+    <% end %>
 
     <br>
-    <h3>Teams</h3>
-    <%= generate_form.label :t_count, "Number of teams:" %>
-    <%= generate_form.number_field :t_count, min: 1 %><br>
-    <p>Population range:</p>
-    <%= generate_form.label :t_population_min,  "Min:" %>
-    <%= generate_form.number_field :t_population_min, min: 1 %><br>
-    <%= generate_form.label :t_population_max,  "Max:" %>
-    <%= generate_form.number_field :t_population_max, min: 1 %><br>
-
-    <br>
-    <h3>Allocations</h3>
-    <p>Duration range:</p>
-    <%= generate_form.label :duration_min,  "Min:" %>
-    <%= generate_form.number_field :duration_min, min: 1 %><br>
-    <%= generate_form.label :duration_max,  "Max:" %>
-    <%= generate_form.number_field :duration_max, min: 1 %><br>
-
-    <%= generate_form.label :a_chance, "Team allocation chance(%)(min 1 is allocated):" %>
-    <%= generate_form.number_field :a_chance, min: 0, max: 100 %><br>
-  <% end %>
-
-  <br>
-  <%= f.submit "Generate random project" %>
+    <%= f.submit "Generate random project" %>
+  </div>
 <% end %>

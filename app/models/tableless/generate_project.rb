@@ -1,8 +1,10 @@
 class GenerateProject < ApplicationModel
-  attr_accessor :t_count, :p_chance, :t_count, :t_population_min, :t_population_max, :duration_min, :duration_max, :a_chance
+  attr_accessor :initial_task, :task_count, :max_prec, :t_count, :t_population_min, :t_population_max, :duration_min, :duration_max, :a_chance
 
+  validates :initial_task, presence: true
+  validates :task_count, presence: true
+  validates :max_prec, presence: true
   validates :t_count, presence: true
-  validates :p_chance, presence: true
   validates :t_population_min, presence: true
   validates :t_population_max, presence: true
   validates :duration_min, presence: true
@@ -13,8 +15,9 @@ class GenerateProject < ApplicationModel
   validate :must_be_range
 
   def convert_type
-    self.t_count = t_count.to_i
-    self.p_chance = p_chance.to_i
+    self.initial_task = initial_task.to_i
+    self.task_count = task_count.to_i
+    self.max_prec = max_prec.to_i
     self.t_count = t_count.to_i
     self.t_population_min = t_population_min.to_i
     self.t_population_max = t_population_max.to_i

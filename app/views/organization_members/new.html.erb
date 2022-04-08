@@ -4,30 +4,34 @@
 <%= render "error_organization_member" %>
 
 <%= form_with(url: new_organization_member_path, method: "get", remote: true) do |f| %>
-  Method: <%= f.select :type, options_for_select(["Username", "Telephone", "Email"], :selected => session[:organization_member_type]), {},
+  <%= f.label :type, "Method:" %>
+  <%= f.select :type, options_for_select(["Username", "Telephone", "Email"], :selected => session[:organization_member_type]), {},
     :onchange => "this.form.submit();" %>
 <% end %>
 <br>
-<%= form_with(url: organization_members_path, method: "post", local: true, class: "form-2") do |f| %>
-  <%= f.hidden_field :type, value: session[:organization_member_type] %>
 
-  <% if session[:organization_member_type] == "Telephone" %>
-    <%= f.label :telephone, "Telephone:" %>
-    <%= f.text_field :telephone %>
-  <% elsif session[:organization_member_type] == "Email" %>
-    <%= f.label :email, "Email:" %>
-    <%= f.text_field :email %>
-  <% else %>
-    <%= f.label :username, "Username:" %>
-    <%= f.text_field :username %>
-  <% end %>
+<div class="form-2">
+  <%= form_with(url: organization_members_path, method: "post", local: true) do |f| %>
+    <%= f.hidden_field :type, value: session[:organization_member_type] %>
 
-  <% if is_host_member?(session[:organization_id]) %>
-    <%= f.label :can_edit, "Can edit projects:" %>
-    <%= f.select :can_edit, options_for_select([true, false], :selected => false) %>
-    <%= f.label :can_invite, "Can invite other users:" %>
-    <%= f.select :can_invite, options_for_select([true, false], :selected => false) %>
+    <% if session[:organization_member_type] == "Telephone" %>
+      <%= f.label :telephone, "Telephone:" %>
+      <%= f.text_field :telephone %>
+    <% elsif session[:organization_member_type] == "Email" %>
+      <%= f.label :email, "Email:" %>
+      <%= f.text_field :email %>
+    <% else %>
+      <%= f.label :username, "Username:" %>
+      <%= f.text_field :username %>
+    <% end %>
+
+    <% if is_host_member?(session[:organization_id]) %>
+      <%= f.label :can_edit, "Can edit projects:" %>
+      <%= f.select :can_edit, options_for_select([true, false], :selected => false) %>
+      <%= f.label :can_invite, "Can invite other users:" %>
+      <%= f.select :can_invite, options_for_select([true, false], :selected => false) %>
+    <% end %>
+    <br>
+    <%= f.submit "Add member" %>
   <% end %>
-  <br>
-  <%= f.submit "Add member" %>
-<% end %>
+</div>

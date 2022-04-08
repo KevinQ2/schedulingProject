@@ -118,33 +118,6 @@ class ProjectsController < ApplicationController
     end
   end
 
-  def generate_schedule
-    set_show_variables
-
-    if @capacity_conflicts.count == 0 and @cycle_conflicts.count == 0 and @unallocated_conflicts.count == 0
-      if params[:submit] == "priority rule"
-        schedule = helpers.generate_schedule(@project, params[:scheme], params[:priority_rule], params[:sampling], params[:bias])
-      elsif params[:submit] == "algorithm"
-        if params[:algorithm] = "Genetic algorithm"
-          schedule = helpers.generate_genetic_schedule(@project)
-          @messages = schedule[0][1].clone
-          schedule[0] = schedule[0][0]
-        end
-      end
-
-      schedule[0].each do |record|
-        ScheduleAllocation.create(
-          project_id: @project.id,
-          start_date: record[1][0] - PotentialAllocation.find(record[1][1]).duration,
-          end_date: record[1][0],
-          potential_allocation_id: record[1][1]
-        )
-      end
-    end
-
-    render "show"
-  end
-
   private
     def redirect_if_not_authorised
       unless OrganizationMember.exists?(:user_id => current_user.id, :organization_id => Project.find(params[:id]).organization_id)
@@ -159,7 +132,7 @@ class ProjectsController < ApplicationController
 
     def set_show_variables
       @can_edit = helpers.is_edit_member?(session[:organization_id])
-      
+
       @project = Project.find(params[:id])
       @capacity_conflicts = helpers.get_capacity_conflicts(@project.id)
       @cycle_conflicts = helpers.get_cycles(@project.id)
@@ -182,6 +155,6 @@ class ProjectsController < ApplicationController
     end
 
     def project_generation_params
-      params.require(:generate_project).permit(:t_count, :p_chance, :t_count, :t_population_min, :t_population_max, :duration_min, :duration_max, :a_chance)
+      params.require(:generate_project).permit(:initial_task, :task_count, :max_prec, :t_count, :t_population_min, :t_population_max, :duration_min, :duration_max, :a_chance)
     end
 end

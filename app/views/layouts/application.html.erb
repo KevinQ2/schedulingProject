@@ -24,6 +24,22 @@
     <% end %>
     <!-- END Notifications -->
 
-    <%= yield %>
+
+    <!-- Centers content -->
+    <div class="mt-3">
+      <div class="ml-5">
+        <div class="mr-5">
+          <!-- Profile header -->
+          <div style="position:absolute;right:50px">
+            <% if controller_name != "sessions" and controller_name != "home_page" and controller_name != "users"  %>
+              <%= link_to "Profile", user_path(current_user), method: :get %>
+            <% end %>
+          </div>
+          <!-- END Profile header -->
+
+          <%= yield %>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

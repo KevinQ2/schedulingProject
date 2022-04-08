@@ -3,8 +3,10 @@
 <h1>Create new organization</h1>
 <%= render "error_organization" %>
 
-<%= form_for(@organization, method: "post", class: "form-2") do |f| %>
+<div class="form-2">
+<%= form_for(@organization, method: "post") do |f| %>
   <%= render(:partial=> 'form', :locals => {:f => f}) %>
   <br>
   <%= f.submit "Create Organization" %>
 <% end %>
+</div>

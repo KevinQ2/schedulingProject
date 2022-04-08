@@ -22,12 +22,12 @@ module ProjectsHelper
     return [get_genetic_schedule(project), Time.now - start]
   end
 
-  def generate_project(project, generate_project)
+  def generate_project(project, p)
     project.save
-    generate_tasks(project.id, generate_project.t_count)
-    generate_teams(project.id, generate_project.t_count, generate_project.t_population_min..generate_project.t_population_max)
-    generate_precedences(project.id, generate_project.p_chance)
-    generate_allocations(project.id, generate_project.duration_min..generate_project.duration_max, generate_project.a_chance)
+    generate_tasks(project.id, p.task_count)
+    generate_teams(project.id, p.t_count, p.t_population_min..p.t_population_max)
+    generate_precedences(project.id, p.initial_task, p.max_prec)
+    generate_allocations(project.id, p.duration_min..p.duration_max, p.a_chance)
   end
 
   def generate_tasks(project, count)
@@ -55,27 +55,36 @@ module ProjectsHelper
     end
   end
 
-  def generate_precedences(project, chance)
+  def generate_precedences(project, initial, max)
     tasks = Task.where(:project_id => project).order('title::integer')  # only valid since we know title is an integer
     precedences = {}
 
     index = 0
     while index < tasks.count
-      precedences[tasks[index]] = Set[]  # stores direct and indirect precedences for each task
-      options = tasks[0, index] # slice has no risk of cycles by following order of array
+      if index >= initial and
+        precedences[tasks[index]] = Set[]  # stores direct and indirect precedences for each task
+        options = tasks[0, index] # slice has no risk of cycles by following order of array
 
-      # traverse newer tasks first
-      options.reverse.each do |option|
-        # ignore existing direct/indirect precedence relations
-        if !precedences[tasks[index]].include?(option)
-          if rand(100) < chance
-            TaskPrecedence.create(
-              task_id: tasks[index].id,
-              required_task_id: option.id
-            )
+        count = 0
 
-            precedences[tasks[index]].add(option)
-            precedences[tasks[index]].merge(precedences[option])
+        # traverse newer tasks first
+        options.reverse.each do |option|
+          if count >= max
+            break
+          end
+
+          # ignore existing direct/indirect precedence relations
+          if !precedences[tasks[index]].include?(option)
+            if rand(100) < (2 / tasks.count)
+              TaskPrecedence.create(
+                task_id: tasks[index].id,
+                required_task_id: option.id
+              )
+
+              precedences[tasks[index]].add(option)
+              precedences[tasks[index]].merge(precedences[option])
+              count += 1
+            end
           end
         end
       end
