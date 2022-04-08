@@ -20,6 +20,8 @@ class ProjectsController < ApplicationController
       @schedules = []
 
       if !@schemes.nil? and !@priority_rules.nil?
+        priority_hash = {}
+
         @priority_rules.each do |rule|
           scheme_hash = {}
 
@@ -29,8 +31,10 @@ class ProjectsController < ApplicationController
           end
 
           # [rule, {scheme -> [project length, running time]}]
-          @schedules[rule] = scheme_hash
+          priority_hash[rule] = scheme_hash
         end
+
+        @schedules = priority_hash
       end
     end
 

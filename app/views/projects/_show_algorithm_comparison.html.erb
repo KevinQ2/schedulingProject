@@ -29,3 +29,9 @@
     </tbody>
   </table>
 <% end %>
+
+<% if !@messages.nil? %>
+  <% @messages.each do |message| %>
+    <%= message %>
+  <% end %>
+<% end %>
