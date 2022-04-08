@@ -5,7 +5,6 @@
       <tr>
         <td>Schedule generation schemes</td>
         <td>Priority rules</td>
-        <td>Sampling</td>
         <td></td>
       </tr>
     </thead>
@@ -39,20 +38,6 @@
             <%= p.check_box checked: @priority_rules.include?(p.object.last) %>
             <%= p.object.first %><br>
           <% end %>
-        </td>
-        <td class="align-top">
-          <%= f.collection_check_boxes :sampling, {
-            "None": "none",
-            "Random sampling": "random",
-            "Biased random sampling": "biased",
-            "Regret based biased random sampling": "regret"
-          }, :last, :first do |p| %>
-            <%= p.check_box checked: @sampling.include?(p.object.last) %>
-            <%= p.object.first %><br>
-          <% end %>
-          <br>
-          <%= f.label :bias, "Bias factor: " %>
-          <%= f.number_field :bias, min: 0, step: 0.1, value: 1 %>
         </td>
         <td>
           <%= f.submit "Compare algorithms" %>

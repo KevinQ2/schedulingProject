@@ -1,6 +1,6 @@
 <a href="<%= organization_path(session[:organization_id]) %>">Back</a>
 
-<h1>Delete Project</h1>
+<h1>Delete Project: <%= @project.name %></h1>
 <p>Are you sure you want to delete this?</p>
 <%= form_for(@project, method: "delete") do |f| %>
   <%= f.submit "Delete" %>

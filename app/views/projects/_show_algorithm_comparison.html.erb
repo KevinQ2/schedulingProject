@@ -3,33 +3,26 @@
   <table class="table table-bordered">
     <thead>
       <tr>
-        <td rowspan='3'>Priority rule</td>
+        <td rowspan='2', class="text-center">Priority rule</td>
 
         <% @schemes.each do |scheme| %>
-          <td colspan='4'><%= scheme %></td>
+          <td colspan='2', class="text-center"><%= scheme %></td>
         <% end %>
-
-        <td colspan='2'>Completion time</td>
-        <td colspan='2'>Running time</td>
       </tr>
       <tr>
         <% @schemes.each do |scheme| %>
-          <td><%= scheme %></td>
-        <% end %>
-        <% @schemes.each do |scheme| %>
-          <td><%= scheme %></td>
+          <td class="text-center">Completion time</td>
+          <td class="text-center">Running time</td>
         <% end %>
       </tr>
     </thead>
     <tbody>
       <% @schedules.each do |rule, scheme_hash| %>
         <tr>
-          <td><%= schedule[0] %></td>
+          <td><%= rule %></td>
           <% @schemes.each do |scheme| %>
-            <td><%= schedule[1][scheme][0] %></td>
-          <% end %>
-          <% @schemes.each do |scheme| %>
-            <td><%= schedule[1][scheme][1] %></td>
+            <td><%= scheme_hash[scheme][0] %></td>
+            <td><%= scheme_hash[scheme][1] %></td>
           <% end %>
         </tr>
       <% end %>

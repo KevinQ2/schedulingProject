@@ -22,7 +22,7 @@ module SerialScheduleHelper
   def get_serial_activity_schedule(project, activity_list)
     project = Project.find(project)
     tasks, resources = initialise_environment(project)
-    return gen_serial_schedule({}, activity_list, [0], {0 => resources}, tasks.count, nil, nil, nil)
+    return gen_serial_schedule({}, activity_list, [0], {0 => resources}, tasks.count, nil, "none", nil)
   end
 
   def gen_serial_schedule(completed, activity_list, f_times, resources, count, task_values, sampling, bias)
@@ -35,7 +35,7 @@ module SerialScheduleHelper
 
     # select next task to be allocated
     task = nil
-    if sampling == "none"
+    if sampling == "none" or sampling == nil
       # activity list is assumed to follow precedence feasibility
       task = activity_list[0]
     else
@@ -92,8 +92,7 @@ module SerialScheduleHelper
     end
 
     if best_record == nil
-      #flash.alert = "Failed to allocate all tasks "
-      #flash.alert = task
+      flash.alert = "Failed to allocate all tasks "
       return completed
     end
 

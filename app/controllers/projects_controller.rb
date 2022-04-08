@@ -16,8 +16,6 @@ class ProjectsController < ApplicationController
       @schemes.delete("")
       @priority_rules = params[:priority_rules]
       @priority_rules.delete("")
-      @sampling = params[:sampling]
-      @sampling.delete("")
       @schedules = []
 
       if !@schemes.nil? and !@priority_rules.nil? and !@sampling.nil?
@@ -27,15 +25,9 @@ class ProjectsController < ApplicationController
           scheme_hash = {}
 
           @schemes.each do |scheme|
-            sample_hash = {}
-
-            @sampling.each do |sample|
-              schedule = helpers.generate_schedule(@project, scheme, rule, sample, params[:bias]) #[schedule, running time]
-              sample_hash[sample] = [schedule[0].max_by{|k, v| v[0]}[1][0], schedule[1]] # scheme -> [schedule length, running time]
-            end
-
-            # scheme -> {samples -> schedule}
-            scheme_hash[scheme] = sample_schedules
+            # scheme -> {schedule}
+            schedule = helpers.generate_schedule(@project, scheme, rule, "none", nil) #[schedule, running time]
+            scheme_hash[scheme] = [schedule[0].max_by{|k, v| v[0]}[1][0], schedule[1]] # scheme -> [schedule length, running time]
           end
 
           # [rule, {scheme -> [project length, running time]}]

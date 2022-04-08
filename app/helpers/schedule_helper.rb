@@ -73,7 +73,7 @@ module ScheduleHelper
   end
 
   def priority_rule(tasks, rule)
-    activity_list = nil
+    activity_list = []
 
     if rule == "SPT"
       activity_list, task_values = SPT(tasks)
@@ -102,7 +102,7 @@ module ScheduleHelper
     elsif rule == "GCRWC"
       activity_list, task_values = GCRWC(tasks)
     end
-
+    
     return fix_activity_list(activity_list, [], {}), task_values
   end
 

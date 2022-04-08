@@ -6,13 +6,21 @@ module PriorityRuleHelper
       return new
     end
 
+    found = false
+
     old.each do |task|
       if check_precedence_feasible(completed, task)
         new.push(task)
         completed[task] = 1
+        found = true
         old.delete(task)
         break
       end
+    end
+
+    if !found
+      flash.alert = "error in producing activity list"
+      return new
     end
 
     return fix_activity_list(old, new, completed)
@@ -37,7 +45,8 @@ module PriorityRuleHelper
   end
 
   def LPT(tasks)
-    return SPT(tasks).reverse
+    temp = SPT(tasks)
+    return temp[0].reverse, temp[1]
   end
 
   # network based

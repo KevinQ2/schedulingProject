@@ -3,8 +3,23 @@
 <h1>Change details</h1>
 <%= render "error_user" %>
 
-<%= form_for(@user, method: "patch", class: "form-2") do |f| %>
-  <%= render(:partial=> 'form', :locals => {:f => f}) %>
-  <br>
-  <%= f.submit "Update details" %>
-<% end %>
+<div class="form-2">
+    <%= form_for(@user, method: "patch") do |f| %>
+    <%= f.label :username, "Username:" %>
+    <%= f.text_field :username%>
+
+    <%= f.label :first_name, "First name:" %>
+    <%= f.text_field :first_name %>
+
+    <%= f.label :last_name, "Last name:" %>
+    <%= f.text_field :last_name %>
+
+    <%= f.label :email, "Email:" %>
+    <%= f.text_field :email %>
+
+    <%= f.label :telephone, "Telephone:" %>
+    <%= f.text_field :telephone %>
+    <br>
+    <%= f.submit "Update details" %>
+  <% end %>
+</div>

@@ -12,7 +12,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    if @user.save
+    if @user.save(context: :create)
       if logged_in?
         redirect_to '/users/index'
       else
@@ -29,7 +29,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @user.attributes = user_edit_params
 
-    if @user.save
+    if @user.save(context: :edit)
       redirect_to user_path(@user.id)
     else
       render "edit"
@@ -44,7 +44,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @user.attributes = user_password_params
 
-    if @user.save
+    if @user.save(context: :change_password)
       redirect_to user_path(@user.id)
     else
       render "change_password"

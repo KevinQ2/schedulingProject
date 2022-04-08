@@ -1,3 +1,13 @@
 <h1>Home</h1>
-<%= link_to "Organizations", organizations_path %>
-<%= link_to "Profile", user_path(current_user), method: :get %>
+<%= link_to "Profile", user_path(current_user), method: :get %><br>
+<%= link_to "Organizations", organizations_path %><br>
+
+<p>Welcome to the application, to produce a schedule:</p>
+<ul>
+  <li>Click on the "Organizations" link</li>
+  <li>Select an organization. Create one if you have not already</li>
+  <li>Select a project. Create one if you have not already</li>
+  <li>Define your tasks</li>
+  <li>Define your teams</li>
+  <li>Define the possible allocations of your teams to tasks</li>
+</ul>
