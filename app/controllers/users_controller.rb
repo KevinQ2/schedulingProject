@@ -10,14 +10,12 @@ class UsersController < ApplicationController
   end
 
   def create
+    # register an account
     @user = User.new(user_params)
 
     if @user.save(context: :create)
-      if logged_in?
-        redirect_to '/users/index'
-      else
-        redirect_to '/login'
-      end
+      flash.alert = "Successfully registered account"
+      redirect_to '/login'
     end
   end
 

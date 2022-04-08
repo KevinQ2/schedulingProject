@@ -1,15 +1,15 @@
 module ScheduleHelper
   using PriorityRuleHelper
+  using ProjectsHelper
 
   def initialise_environment(project)
-    decision_set = []
+    # gather the relevant tasks and teams
     tasks = []
+    resources = {}
 
     Task.where(:project_id => project.id).each do |task|
       tasks.push(task.id)
     end
-
-    resources = {}
 
     Team.where(:project_id => project.id).each do |team|
       resources[team.id] = team.population
@@ -46,6 +46,7 @@ module ScheduleHelper
     index = f_times.index(start_time)
     latest = index
 
+    # update resource for the duration of the task
     loop do
       if index >= f_times.count
         break
@@ -63,6 +64,7 @@ module ScheduleHelper
       index += 1
     end
 
+    # update set of finish times
     if f_times.include?(end_time) == false
       f_times.insert(latest + 1, end_time)
       resources[end_time] = resources[f_times[latest]].clone
@@ -73,6 +75,7 @@ module ScheduleHelper
   end
 
   def priority_rule(tasks, rule)
+    # produce an activity list based on priority rules
     activity_list = []
 
     if rule == "SPT"
@@ -102,7 +105,7 @@ module ScheduleHelper
     elsif rule == "GCRWC"
       activity_list, task_values = GCRWC(tasks)
     end
-    
+
     return fix_activity_list(activity_list, [], {}), task_values
   end
 
@@ -164,7 +167,5 @@ module ScheduleHelper
 
       probability -= value
     end
-
-    #flash.alert = "end: prob: " + probability.to_s
   end
 end

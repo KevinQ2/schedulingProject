@@ -7,6 +7,7 @@ one_one:
   is_host: true
   can_edit: false
   can_invite: false
+  pending: false
 
 one_two:
   organization: one
@@ -14,6 +15,7 @@ one_two:
   is_host: false
   can_edit: true
   can_invite: false
+  pending: false
 
 one_three:
   organization: one
@@ -21,6 +23,7 @@ one_three:
   is_host: false
   can_edit: false
   can_invite: true
+  pending: false
 
 one_four:
   organization: one
@@ -28,6 +31,15 @@ one_four:
   is_host: false
   can_edit: false
   can_invite: false
+  pending: false
+
+one_five:
+  organization: one
+  user: four
+  is_host: false
+  can_edit: false
+  can_invite: false
+  pending: true
 
 two_two:
   organization: two
@@ -35,3 +47,4 @@ two_two:
   is_host: true
   can_edit: true
   can_invite: true
+  pending: false

@@ -11,6 +11,8 @@ class OrganizationMembersController < ApplicationController
 
   def new
     @organization_member = OrganizationMember.new
+
+    # determines which field is used to identify a user
     if params[:type] != nil
       session[:organization_member_type] = params[:type]
     elsif session[:organization_member_type] == nil
@@ -21,11 +23,13 @@ class OrganizationMembersController < ApplicationController
   def create
     @organization_member = OrganizationMember.new(organization_id: session[:organization_id], pending: true)
 
+    # only hosts can modify a user's priveleges
     if helpers.is_host_member?(session[:organization_id])
       @organization_member.can_edit = params[:can_edit]
       @organization_member.can_invite = params[:can_invite]
     end
 
+    # identify user
     user = nil
     type = params[:type]
 
@@ -80,6 +84,7 @@ class OrganizationMembersController < ApplicationController
   end
 
   def leave
+    # only called when a user decides to leave the organization
     organization_member = OrganizationMember.find(params[:id])
     organization_member.destroy
 

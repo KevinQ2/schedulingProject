@@ -1,17 +1,6 @@
 module SerialScheduleHelper
   include ScheduleHelper
 
-  class Schedule
-    attr_accessor :schedule, :initial_activity_list, :assignment_order, :length, :running_time
-
-    def initialise()
-      self.initial_activity_list = []
-      self.assignment_order = []
-      self.schedule = {}
-      self.running_time = 0
-    end
-  end
-
   def get_serial_priority_schedule(project, rule, sampling, bias)
     tasks, resources = initialise_environment(project)
     activity_list, task_values = priority_rule(tasks, rule)

@@ -1,3 +1,4 @@
-<% if @unallocated_conflicts.count > 0 %>
-  <p>The project contains unallocated tasks:<%= @unallocated_conflicts.map{|id| Task.find(id).title} %></p>
+<% conflicts = get_unallocated_conflicts(session[:project_id]) %>
+<% if conflicts.count > 0 %>
+  <p>The project contains unallocated tasks:<%= conflicts.map{|id| Task.find(id).title} %></p>
 <% end %>

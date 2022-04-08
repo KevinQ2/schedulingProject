@@ -5,10 +5,8 @@ class TasksController < ApplicationController
   before_action :redirect_if_not_edit, except: [:index]
 
   def index
-    @can_edit = helpers.is_edit_member?(session[:organization_id])
-
     @tasks = Task.where(:project_id => session[:project_id])
-    @cycle_conflicts = helpers.get_cycles(session[:project_id])
+    @can_edit = helpers.is_edit_member?(session[:organization_id])
   end
 
   def new
@@ -20,6 +18,7 @@ class TasksController < ApplicationController
     @task.project_id = session[:project_id]
 
     if @task.save
+      # changes to project environment outdates the schedule
       helpers.clear_schedule(@task.project_id)
       redirect_to tasks_path
     else
@@ -36,6 +35,7 @@ class TasksController < ApplicationController
     @task.attributes = task_params
 
     if @task.save
+      # changes to project environment outdates the schedule
       helpers.clear_schedule(@task.project_id)
       redirect_to tasks_path
     else
@@ -48,8 +48,6 @@ class TasksController < ApplicationController
     @tasks = Task.where(:project_id => session[:project_id])
     @tasks = @tasks.where.not(:id => @task.id)
     @precedences = TaskPrecedence.where(:task_id => @task.id)
-
-    @cycle_conflicts = helpers.get_cycles(session[:project_id])
   end
 
   def update_precedences
@@ -61,10 +59,10 @@ class TasksController < ApplicationController
     @tasks = @tasks.where.not(:id => @task.id)
     @precedences = TaskPrecedence.where(:task_id => params[:id])
 
-    @cycle_conflicts = helpers.get_cycles(session[:project_id])
-
+    # changes to project environment outdates the schedule
     helpers.clear_schedule(@task.project_id)
 
+    # delete all then precedences then repopulate
     @precedences.each do |precedence|
       if !precedence.destroy
         failed_delete.push(precedence)
@@ -82,15 +80,14 @@ class TasksController < ApplicationController
     if (failed_create - failed_delete | failed_delete - failed_create).count == 0
       flash.alert = "Successfully updated precedences"
     else
-      flash.alert = ""
       creates = failed_create - failed_delete
       deletes = failed_delete - failed_create
 
       if creates.count > 0
-        flash.alert += "Failed to create precedences " + creates.to_s
+        flash.alert = "Failed to create precedences " + creates.to_s
       end
       if deletes.count > 0
-        flash.alert += "Failed to delete precedences " + deletes.to_s
+        flash.alert = "Failed to delete precedences " + deletes.to_s
       end
     end
 
@@ -102,9 +99,8 @@ class TasksController < ApplicationController
   end
 
   def destroy
+    # changes to project environment outdates the schedule
     @task = Task.find(params[:id])
-    project_id = @task.project_id
-
     @task.destroy
     helpers.clear_schedule(@task.project_id)
     redirect_to tasks_path

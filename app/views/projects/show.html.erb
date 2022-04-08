@@ -9,27 +9,29 @@
 <a href="<%= potential_allocations_path %>"><button type="button">Define possible allocations</button></a><br><br>
 
 <h3>Schedule</h3>
+<!-- display conflicts within project environment -->
 <%= render "tasks/error_cycles" %>
 <%= render "potential_allocations/error_capacity" %>
 <%= render "potential_allocations/error_unallocated" %>
 
-<% if @cycle_conflicts.count == 0 and @capacity_conflicts.count == 0 and @unallocated_conflicts.count == 0 %>
+<% if !@has_conflict %>
   <% if ScheduleAllocation.exists?(:project_id => params[:id]) %>
+    <!-- can view schedule -->
     <p>Current schedule total project length: <%= ScheduleAllocation.where(:project_id => params[:id]).maximum(:end_date) %></p>
     <a href="<%= schedule_path(@project.id) %>"><button type="button">View schedule</button></a>
-    <a href="<%= delete_schedule_path(@project.id) %>"><button type="button">Delete schedule</button></a>
+
+    <% if @can_edit %>
+      <a href="<%= delete_schedule_path(@project.id) %>"><button type="button">Delete schedule</button></a>
+    <% end %>
   <% else %>
-    <%= render "set_schedule_form" %>
+    <% if @can_edit %>
+      <%= render "set_schedule_form" %>
+    <% end %>
   <% end %>
 
+  <!-- allow users to experiment on scheduling techniques -->
   <%= render "compare_algorithms" %>
   <%= render "show_algorithm_comparison" %>
 <% else %>
   <p>Please resolve all conflicts to be able to compute schedules</p>
-<% end %>
-
-<% if !@messages.nil? %>
-  <% @messages.each do |message| %>
-    <%= message %><br>
-  <% end %>
 <% end %>

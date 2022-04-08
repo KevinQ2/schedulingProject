@@ -1,11 +1,12 @@
 module TasksHelper
-  def get_cycles(project_id)
+  def get_cycles(project)
     covered_tasks = Set[]
     all_cycles = []
 
-    tasks = Task.where(:project_id => project_id)
+    tasks = Task.where(:project_id => project)
 
     tasks.each do |task|
+      # ignore already searched tasks
       if !covered_tasks.include?(task.id)
         covered, cycles = compute_cycles(covered_tasks, [], task.id, [])
         covered_tasks.merge(covered)
@@ -18,10 +19,11 @@ module TasksHelper
 
   def compute_cycles(covered_tasks, path, current_task, cycles_found)
     if path.include?(current_task)
+      # a cycle is found
       new_cycle = path[path.index(current_task), path.count].push(current_task)
       temp = new_cycle.to_set
 
-      # don't add duplicate cycles
+      # do not add duplicate cycles
       cycles_found.each do |cycle|
         if cycle.to_set == temp
           return covered_tasks, cycles_found

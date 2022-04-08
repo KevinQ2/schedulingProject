@@ -16,21 +16,21 @@ class OrganizationTest < ActiveSupport::TestCase
 
   test "name should not be less than 1 characters" do
     @organization.name = "a" * 0
-    assert_not @user.valid?
+    assert_not @organization.valid?
   end
 
   test "name can be 1 characters" do
     @organization.name = "a"
-    assert @user.valid?
+    assert @organization.valid?
   end
 
   test "name should not be longer than 30 characters" do
     @organization.name = "a" * 31
-    assert_not @user.valid?
+    assert_not @organization.valid?
   end
 
   test "name can be 30 characters" do
     @organization.name = "a" * 30
-    assert @user.valid?
+    assert @organization.valid?
   end
 end

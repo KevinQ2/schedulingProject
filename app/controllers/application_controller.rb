@@ -39,6 +39,7 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_if_not_edit
+    # determines if the user is allowed to edit projects
     if !helpers.is_edit_member?(session[:organization_id])
       flash.alert = "You are not authorised"
       current_controller = controller_name()
@@ -58,6 +59,7 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_if_not_invite
+    # determines if the user can invite other users
     if !helpers.is_invite_member?(session[:organization_id])
       flash.alert = "You are not authorised"
       redirect_to organization_members_path

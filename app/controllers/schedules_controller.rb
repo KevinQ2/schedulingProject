@@ -6,11 +6,9 @@ class SchedulesController < ApplicationController
 
   def create
     project = Project.find(session[:project_id])
-    capacity_conflicts = helpers.get_capacity_conflicts(project.id)
-    cycle_conflicts = helpers.get_cycles(project.id)
-    unallocated_conflicts = helpers.get_unallocated_conflicts(project.id)
 
-    if capacity_conflicts.count == 0 and cycle_conflicts.count == 0 and unallocated_conflicts.count == 0
+    if !helpers.has_conflicts?(project)
+      # compute schedule
       if params[:submit] == "priority rule"
         schedule = helpers.generate_schedule(project, params[:scheme], params[:priority_rule], params[:sampling], params[:bias])
       elsif params[:submit] == "algorithm"
@@ -21,6 +19,7 @@ class SchedulesController < ApplicationController
         end
       end
 
+      # store schedule
       schedule[0].each do |record|
         ScheduleAllocation.create(
           project_id: project.id,
@@ -43,6 +42,7 @@ class SchedulesController < ApplicationController
   end
 
   def destroy
+    # clear all schedule records
     schedules = ScheduleAllocation.where(:project_id => params[:id])
 
     schedules.each do |schedule|

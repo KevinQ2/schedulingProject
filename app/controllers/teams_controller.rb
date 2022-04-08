@@ -5,9 +5,8 @@ class TeamsController < ApplicationController
   before_action :redirect_if_not_edit, except: [:index]
 
   def index
-    @can_edit = helpers.is_edit_member?(session[:organization_id])
-
     @teams = Team.where(:project => session[:project_id])
+    @can_edit = helpers.is_edit_member?(session[:organization_id])
   end
 
   def new
@@ -19,6 +18,7 @@ class TeamsController < ApplicationController
     @team.project_id = session[:project_id]
 
     if @team.save
+      # changes to project environment outdates the schedule
       helpers.clear_schedule(@team.project_id)
       redirect_to teams_path
     else
@@ -35,6 +35,7 @@ class TeamsController < ApplicationController
     @team.attributes = team_params
 
     if @team.save
+      # changes to project environment outdates the schedule
       helpers.clear_schedule(@team.project_id)
       redirect_to teams_path
     else
@@ -47,11 +48,10 @@ class TeamsController < ApplicationController
   end
 
   def destroy
-    team = Team.find(params[:id])
-    project_id = team.project_id
-
-    team.destroy
+    # changes to project environment outdates the schedule
+    @team = Team.find(params[:id])
     helpers.clear_schedule(@team.project_id)
+    @team.destroy
     redirect_to teams_path
   end
 

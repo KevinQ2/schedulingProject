@@ -18,6 +18,7 @@ module PriorityRuleHelper
       end
     end
 
+    # safety measure, this should never occur
     if !found
       flash.alert = "error in producing activity list"
       return new

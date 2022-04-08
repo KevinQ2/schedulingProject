@@ -4,18 +4,20 @@ class SessionsController < ApplicationController
   end
 
   def create
+    # authenticate user's login details
     @user = User.find_by(username: params[:username])
 
     if @user && @user.authenticate(params[:password])
       session[:username] = @user.username
-      redirect_to '/home'
+      redirect_to "/home"
     else
       flash.alert = "Login details are incorrect"
-      redirect_to '/login'
+      render "new"
     end
   end
 
   def destroy
+    # log out
     session.delete(:username)
     redirect_to(root_url)
   end

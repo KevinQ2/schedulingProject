@@ -7,6 +7,7 @@ class OrganizationsController < ApplicationController
   def index
     @organizations = []
 
+    # retrieves only organizations the user is a member of
     OrganizationMember.where(:user_id => current_user.id).each do |organization_member|
       @organizations.push(Organization.find(organization_member.organization_id))
     end
@@ -20,6 +21,7 @@ class OrganizationsController < ApplicationController
     @organization = Organization.new(organization_params)
 
     if @organization.save
+      # creators of an organziation is automatically a host
       OrganizationMember.create(
         organization_id: @organization.id,
         user_id: current_user.id,
@@ -64,6 +66,7 @@ class OrganizationsController < ApplicationController
   end
 
   def member_reply
+    # triggered if a user replies to an invitation
     organization = Organization.find(params[:id])
     organization_member = OrganizationMember.find_by(
       organization_id: organization.id,

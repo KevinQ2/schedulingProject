@@ -22,7 +22,16 @@ module ProjectsHelper
     return [get_genetic_schedule(project), Time.now - start]
   end
 
+  def has_conflicts?(project)
+    if get_cycles(project.id).count == 0 and get_capacity_conflicts(project.id).count == 0 and get_unallocated_conflicts(project.id).count == 0
+      return false
+    end
+
+    return true
+  end
+
   def generate_project(project, p)
+    # for experimentation purposes
     project.save
     generate_tasks(project.id, p.task_count)
     generate_teams(project.id, p.t_count, p.t_population_min..p.t_population_max)

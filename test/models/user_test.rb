@@ -3,7 +3,7 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
   def setup
     @user = User.new(
-      username: "user1",
+      username: "test1",
       password: "password1",
       first_name: "user",
       last_name: "one",
@@ -12,7 +12,7 @@ class UserTest < ActiveSupport::TestCase
     )
 
     @user2 = User.new(
-      username: "user2",
+      username: "test2",
       password: "password2",
       first_name: "user",
       last_name: "two",
@@ -26,7 +26,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "@user2 should be valid" do
-    assert @user.valid?
+    assert @user.valid?, @user.errors.messages
   end
 
   test "username should automatically be undercase" do
@@ -53,32 +53,32 @@ class UserTest < ActiveSupport::TestCase
   test "password_confirmation should be equal to password" do
     @user.password = "hello"
     @user.password_confirmation = "Hello"
-    assert_not @user.valid?
+    assert_not @user.valid?(context: :create)
   end
 
   test "password should not be blank" do
     @user.password = @user.password_confirmation = ""
-    assert_not @user.valid?
+    assert_not @user.valid?(context: :create)
   end
 
   test "password should not be less than 4 characters" do
     @user.password = @user.password_confirmation = "a" * 3
-    assert_not @user.valid?
+    assert_not @user.valid?(context: :create)
   end
 
   test "password can be 4 characters" do
     @user.password = @user.password_confirmation = "a" * 4
-    assert @user.valid?
+    assert @user.valid?(context: :create)
   end
 
   test "password should not be longer than 30 characters" do
     @user.password = @user.password_confirmation = "a" * 31
-    assert_not @user.valid?
+    assert_not @user.valid?(context: :create)
   end
 
   test "password can be 30 characters" do
     @user.password = @user.password_confirmation = "a" * 30
-    assert @user.valid?
+    assert @user.valid?(context: :create)
   end
 
   test "first_name should not be blank" do
